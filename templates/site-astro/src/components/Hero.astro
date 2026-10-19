@@ -1,0 +1,59 @@
+---
+import type { HomeContent } from '../content/config';
+
+interface Props {
+  content: HomeContent;
+}
+
+const { content } = Astro.props;
+---
+
+<section class="py-12 sm:py-20 lg:py-24 border-b border-border-subtle" aria-labelledby="hero-headline">
+  <div class="max-w-3xl">
+    <p class="text-xs sm:text-sm font-semibold tracking-wider uppercase text-brand-primary mb-3 sm:mb-4">
+      {content.heroEyebrow}
+    </p>
+
+    <h1
+      id="hero-headline"
+      class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-text-primary leading-tight mb-6"
+    >
+      {content.headline}
+    </h1>
+
+    <p class="text-base sm:text-lg lg:text-xl text-text-secondary leading-relaxed mb-8 sm:mb-10">
+      {content.supportingCopy}
+    </p>
+
+    <div class="flex flex-wrap items-center gap-4">
+      <a
+        href={content.ctaPrimary.href}
+        class="inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold text-sm sm:text-base text-white bg-brand-primary hover:bg-brand-hover transition-colors duration-fast focus-visible:outline-2"
+      >
+        {content.ctaPrimary.label}
+      </a>
+
+      <a
+        href={content.ctaSecondary.href}
+        class="inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold text-sm sm:text-base text-text-primary bg-bg-surface hover:bg-bg-elevated border border-border-strong transition-colors duration-fast focus-visible:outline-2"
+      >
+        {content.ctaSecondary.label}
+      </a>
+    </div>
+
+    {content.highlights && content.highlights.length > 0 && (
+      <div class="mt-12 sm:mt-16 pt-8 border-t border-border-subtle grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8">
+        {content.highlights.map((h) => (
+          <div>
+            <div class="text-2xl sm:text-3xl font-bold text-text-primary mb-1">
+              {h.metric}
+            </div>
+            <div class="text-xs sm:text-sm text-text-secondary font-medium">
+              {h.label}
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

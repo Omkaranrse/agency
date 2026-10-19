@@ -1,0 +1,30 @@
+{
+  "name": "agency-template-site-astro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reusable Astro + Tailwind portfolio template for Agency",
+  "type": "module",
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "start": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro check && ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "build:editorial": "ASTRO_TELEMETRY_DISABLED=1 THEME=editorial astro check && ASTRO_TELEMETRY_DISABLED=1 THEME=editorial astro build",
+    "build:studio": "ASTRO_TELEMETRY_DISABLED=1 THEME=studio astro check && ASTRO_TELEMETRY_DISABLED=1 THEME=studio astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "test": "vitest run",
+    "lint": "ASTRO_TELEMETRY_DISABLED=1 astro check"
+  },
+  "dependencies": {
+    "@astrojs/tailwind": "^5.1.5",
+    "astro": "^4.16.18",
+    "tailwindcss": "^3.4.17",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import rawHomeContent from '../content/home.json';
+import rawProjectsContent from '../content/projects.json';
+import { HomeContentSchema, ProjectsContentSchema } from '../content/config';
+
+const home = HomeContentSchema.parse(rawHomeContent);
+const { projects } = ProjectsContentSchema.parse(rawProjectsContent);
+---
+
+<BaseLayout>
+  <!-- Hero Section -->
+  <Hero content={home} />
+
+  <!-- Featured Projects Section -->
+  <section class="py-12 sm:py-16" aria-labelledby="featured-projects-heading">
+    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-4 mb-8 sm:mb-12">
+      <div>
+        <h2
+          id="featured-projects-heading"
+          class="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary mb-2"
+        >
+          {home.featuredSectionTitle}
+        </h2>
+        <p class="text-text-secondary text-sm sm:text-base max-w-2xl">
+          {home.featuredSectionSubtitle}
+        </p>
+      </div>
+
+      <a
+        href="/projects"
+        class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:text-brand-hover transition-colors focus-visible:outline-2 self-start sm:self-auto"
+      >
+        View All Projects
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <ProjectGrid projects={projects} featuredOnly={true} />
+  </section>
+
+  <!-- Contact CTA Section -->
+  <section class="mt-8 p-8 sm:p-12 rounded-lg bg-bg-surface border border-border-subtle flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="max-w-xl text-center md:text-left">
+      <h2 class="text-xl sm:text-2xl font-bold text-text-primary mb-2">
+        Have a technical challenge or product initiative?
+      </h2>
+      <p class="text-sm sm:text-base text-text-secondary">
+        Let's discuss how Clean Architecture, high-performance web platforms, and automated quality testing can accelerate your delivery.
+      </p>
+    </div>
+
+    <a
+      href="/contact"
+      class="inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold text-sm sm:text-base text-white bg-brand-primary hover:bg-brand-hover transition-colors duration-fast focus-visible:outline-2 whitespace-nowrap"
+    >
+      Start a Conversation
+    </a>
+  </section>
+</BaseLayout>

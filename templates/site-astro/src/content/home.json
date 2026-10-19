@@ -1,0 +1,29 @@
+{
+  "heroEyebrow": "Systems Architecture & Frontend Engineering",
+  "headline": "Engineering durable web applications with rigorous technical standards.",
+  "supportingCopy": "I build full-stack digital products focused on maintainable clean architecture, web accessibility, and high-throughput reliability.",
+  "ctaPrimary": {
+    "label": "Explore Featured Projects",
+    "href": "/projects"
+  },
+  "ctaSecondary": {
+    "label": "Get in Touch",
+    "href": "/contact"
+  },
+  "highlights": [
+    {
+      "metric": "8+ Years",
+      "label": "Professional software delivery"
+    },
+    {
+      "metric": "100%",
+      "label": "WCAG AA accessibility target"
+    },
+    {
+      "metric": "Zero",
+      "label": "Unnecessary client-side JS"
+    }
+  ],
+  "featuredSectionTitle": "Selected Work",
+  "featuredSectionSubtitle": "Production web systems engineered for resilience, accessibility, and performance."
+}

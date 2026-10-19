@@ -1,0 +1,39 @@
+---
+import rawSiteContent from '../content/site.json';
+import { SiteContentSchema } from '../content/config';
+
+const site = SiteContentSchema.parse(rawSiteContent);
+---
+
+<footer class="w-full bg-bg-surface border-t border-border-subtle mt-auto py-8 sm:py-12">
+  <div class="max-w-content mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+    <!-- Copyright & Disclaimer -->
+    <div class="text-xs sm:text-sm text-text-muted text-center md:text-left">
+      <p>{site.footerText}</p>
+    </div>
+
+    <!-- Navigation & Social Links -->
+    <div class="flex flex-wrap items-center justify-center gap-6 text-sm font-medium">
+      {site.nav.map((item) => (
+        <a
+          href={item.href}
+          class="text-text-secondary hover:text-text-primary transition-colors focus-visible:outline-2"
+        >
+          {item.label}
+        </a>
+      ))}
+
+      {site.socialLinks.map((social) => (
+        <a
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-text-secondary hover:text-brand-primary transition-colors focus-visible:outline-2"
+          aria-label={social.label}
+        >
+          {social.platform}
+        </a>
+      ))}
+    </div>
+  </div>
+</footer>

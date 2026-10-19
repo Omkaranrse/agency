@@ -1,0 +1,176 @@
+/* ==============================================================================
+   Agency Design Tokens — tokens.css
+   Single source of truth for portfolio typography, colors, spacing, and variants.
+   Constraints: Poppins font only. No gradients, neon, or glassmorphism.
+   WCAG 2.2 AA accessible contrast ratios enforced.
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* ==============================================================================
+   Default Variant: Editorial
+   Warm alabaster surfaces, deep charcoal text, rich terracotta earth brand accents,
+   refined borders, and subtle classical border radii.
+   ============================================================================== */
+:root,
+[data-theme="editorial"] {
+  /* Brand colors */
+  --color-brand-primary: #9C4126;
+  --color-brand-hover: #7D321C;
+  --color-brand-muted: #EADFD9;
+
+  /* Background & Surface colors */
+  --color-bg-base: #F9F8F6;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-elevated: #F2EFE9;
+
+  /* Text colors (Contrast > 7:1 against base) */
+  --color-text-primary: #1C1B19;
+  --color-text-secondary: #484642;
+  --color-text-muted: #726F68;
+
+  /* Borders & Focus Ring */
+  --color-border-subtle: #E6E1D8;
+  --color-border-strong: #C4BCAC;
+  --color-focus-ring: #9C4126;
+
+  /* Typography scale */
+  --font-family-base: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+  --font-size-5xl: 3rem;       /* 48px */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-24: 6rem;     /* 96px */
+  --space-section: 5rem;
+
+  /* Border radius scale */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* Layout width */
+  --content-max-width: 72rem; /* 1152px */
+
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+}
+
+/* ==============================================================================
+   Second Variant: Studio
+   Pure stark white canvas, crisp obsidian text, focused cobalt blue brand accent,
+   and contemporary structured curves.
+   ============================================================================== */
+[data-theme="studio"] {
+  /* Brand colors */
+  --color-brand-primary: #0952C6;
+  --color-brand-hover: #063C93;
+  --color-brand-muted: #E2ECFA;
+
+  /* Background & Surface colors */
+  --color-bg-base: #FFFFFF;
+  --color-bg-surface: #F5F7FA;
+  --color-bg-elevated: #EBF0F6;
+
+  /* Text colors (Contrast > 12:1 against base) */
+  --color-text-primary: #0C1017;
+  --color-text-secondary: #313A46;
+  --color-text-muted: #5F6C7D;
+
+  /* Borders & Focus Ring */
+  --color-border-subtle: #DDE2EB;
+  --color-border-strong: #A8B4C4;
+  --color-focus-ring: #0952C6;
+
+  /* Border radius scale - slightly softer modern geometry */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Spacing */
+  --space-section: 5.5rem;
+}
+
+/* ==============================================================================
+   Core Base Styles and Accessibility Resets
+   ============================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-base);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Accessible visible keyboard focus */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+/* Accessible skip-link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background-color: var(--color-brand-primary);
+  color: #FFFFFF;
+  padding: 0.75rem 1.25rem;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  z-index: 9999;
+  text-decoration: none;
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Respect user reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

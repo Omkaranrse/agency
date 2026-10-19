@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Timeline from '../components/Timeline.astro';
+import rawAboutContent from '../content/about.json';
+import { AboutContentSchema } from '../content/config';
+
+const about = AboutContentSchema.parse(rawAboutContent);
+---
+
+<BaseLayout title="About" description={about.intro}>
+  <!-- Header / Bio Section -->
+  <section class="max-w-3xl mb-12 sm:mb-16">
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-text-primary mb-6">
+      {about.title}
+    </h1>
+
+    <p class="text-lg sm:text-xl text-text-secondary leading-relaxed font-medium mb-8">
+      {about.intro}
+    </p>
+
+    <div class="space-y-4 text-base sm:text-lg text-text-secondary leading-relaxed">
+      {about.bioParagraphs.map((para) => (
+        <p>{para}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- Skills & Competencies Section -->
+  <section class="mb-16 sm:mb-20 pt-8 border-t border-border-subtle" aria-labelledby="skills-heading">
+    <h2 id="skills-heading" class="text-2xl sm:text-3xl font-bold text-text-primary mb-8">
+      Technical Disciplines & Expertise
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+      {about.skills.map((skillGroup) => (
+        <div class="p-6 rounded-lg bg-bg-surface border border-border-subtle">
+          <h3 class="text-lg font-bold text-text-primary mb-4 pb-2 border-b border-border-subtle">
+            {skillGroup.category}
+          </h3>
+          <ul class="space-y-2 text-sm text-text-secondary">
+            {skillGroup.items.map((item) => (
+              <li class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-primary" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Career & Education Timeline Section -->
+  <section class="mb-16 sm:mb-20 pt-8 border-t border-border-subtle" aria-labelledby="timeline-heading">
+    <h2 id="timeline-heading" class="text-2xl sm:text-3xl font-bold text-text-primary mb-8">
+      Experience & Education
+    </h2>
+
+    <div class="max-w-3xl">
+      <Timeline items={about.timeline} />
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="p-8 sm:p-12 rounded-lg bg-bg-surface border border-border-subtle flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="max-w-xl text-center md:text-left">
+      <h2 class="text-xl sm:text-2xl font-bold text-text-primary mb-2">
+        {about.cta.headline}
+      </h2>
+      <p class="text-sm sm:text-base text-text-secondary">
+        Always open to discussing architectural systems, consulting, or engineering collaboration.
+      </p>
+    </div>
+
+    <a
+      href={about.cta.href}
+      class="inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold text-sm sm:text-base text-white bg-brand-primary hover:bg-brand-hover transition-colors duration-fast focus-visible:outline-2 whitespace-nowrap"
+    >
+      {about.cta.linkText}
+    </a>
+  </section>
+</BaseLayout>

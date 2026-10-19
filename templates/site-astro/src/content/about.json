@@ -1,0 +1,53 @@
+{
+  "title": "About Devon Miller",
+  "intro": "Staff software engineer with eight years of experience architecting distributed cloud systems and accessible frontend interfaces.",
+  "bioParagraphs": [
+    "My work bridges the gap between infrastructure resilience and human-centric interface design. I believe software systems should be transparent, deterministic, and accessible to everyone by default.",
+    "Over my career, I have led technical delivery across fintech platforms, developer tooling ecosystems, and large-scale public sector interfaces. I prioritize Clean Architecture, thorough static verification, and lean web standards over fragile abstractions."
+  ],
+  "skills": [
+    {
+      "category": "Architecture & Languages",
+      "items": ["TypeScript", "Python 3.12", "Node.js", "Clean Architecture", "REST & GraphQL", "Distributed State Machines"]
+    },
+    {
+      "category": "Frontend & Accessibility",
+      "items": ["Astro", "Tailwind CSS", "Semantic HTML5", "WCAG 2.2 AA", "ARIA Patterns", "Performance Optimization"]
+    },
+    {
+      "category": "Platform & Tooling",
+      "items": ["Docker", "Linux Containers", "PostgreSQL", "Git / GitHub Actions", "Vite", "Playwright"]
+    }
+  ],
+  "timeline": [
+    {
+      "period": "2023 — Present",
+      "role": "Staff Platform Architect",
+      "organization": "Meridian Systems",
+      "description": "Directing core multi-tenant platform architecture, container sandboxing, and web accessibility standards across engineering squads."
+    },
+    {
+      "period": "2020 — 2023",
+      "role": "Senior Frontend Engineer",
+      "organization": "Acuity Digital",
+      "description": "Architected accessible, high-volume design systems and component libraries in TypeScript and Astro."
+    },
+    {
+      "period": "2017 — 2020",
+      "role": "Software Engineer",
+      "organization": "Vanguard Labs",
+      "description": "Developed full-stack web applications, REST APIs, and automated CI/CD pipeline automation."
+    },
+    {
+      "period": "2013 — 2017",
+      "role": "B.S. in Computer Science",
+      "organization": "State University",
+      "description": "Focused on software engineering principles, algorithms, and distributed systems."
+    }
+  ],
+  "cta": {
+    "headline": "Interested in collaborating on a technical project?",
+    "linkText": "Start a Conversation",
+    "href": "/contact"
+  }
+}

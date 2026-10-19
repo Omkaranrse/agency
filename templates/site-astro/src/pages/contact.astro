@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm.astro';
+import rawContactContent from '../content/contact.json';
+import rawSiteContent from '../content/site.json';
+import { ContactContentSchema, SiteContentSchema } from '../content/config';
+
+const contact = ContactContentSchema.parse(rawContactContent);
+const site = SiteContentSchema.parse(rawSiteContent);
+---
+
+<BaseLayout title="Contact" description={contact.description}>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-16">
+    <!-- Left Column: Information & Direct Channels -->
+    <section class="lg:col-span-5" aria-labelledby="contact-heading">
+      <h1
+        id="contact-heading"
+        class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-text-primary mb-4"
+      >
+        {contact.title}
+      </h1>
+
+      <p class="text-base sm:text-lg text-text-secondary leading-relaxed mb-8">
+        {contact.description}
+      </p>
+
+      <div class="p-6 rounded-lg bg-bg-surface border border-border-subtle space-y-6">
+        <div>
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">
+            Direct Email
+          </h2>
+          <a
+            href={`mailto:${contact.email}`}
+            class="text-base sm:text-lg font-bold text-brand-primary hover:text-brand-hover transition-colors focus-visible:outline-2"
+          >
+            {contact.email}
+          </a>
+        </div>
+
+        <div class="pt-4 border-t border-border-subtle">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-text-muted mb-3">
+            External Profiles
+          </h2>
+          <ul class="space-y-2 text-sm font-semibold">
+            {site.socialLinks.map((social) => (
+              <li>
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-text-secondary hover:text-brand-primary transition-colors inline-flex items-center gap-1.5 focus-visible:outline-2"
+                  aria-label={social.label}
+                >
+                  {social.platform}
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Interactive Form -->
+    <section class="lg:col-span-7" aria-labelledby="form-heading">
+      <h2 id="form-heading" class="sr-only">Contact Form</h2>
+      <ContactForm content={contact} />
+    </section>
+  </div>
+</BaseLayout>

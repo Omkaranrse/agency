@@ -1,0 +1,109 @@
+---
+import rawSiteContent from '../content/site.json';
+import { SiteContentSchema } from '../content/config';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const site = SiteContentSchema.parse(rawSiteContent);
+
+function normalizePath(p: string): string {
+  if (p.length > 1 && p.endsWith('/')) {
+    return p.slice(0, -1);
+  }
+  return p;
+}
+
+const activePath = normalizePath(currentPath);
+---
+
+<header class="w-full bg-bg-surface border-b border-border-subtle sticky top-0 z-50">
+  <div class="max-w-content mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+    <!-- Brand / Home Link -->
+    <a
+      href="/"
+      class="text-lg sm:text-xl font-bold tracking-tight text-text-primary hover:text-brand-primary transition-colors duration-fast focus-visible:outline-2"
+    >
+      {site.clientName}
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-6" aria-label="Main Navigation">
+      {site.nav.map((item) => {
+        const itemHref = normalizePath(item.href);
+        const isCurrent = activePath === itemHref;
+
+        return (
+          <a
+            href={item.href}
+            class:list={[
+              "text-sm font-medium transition-colors duration-fast px-2 py-1 rounded-sm",
+              isCurrent
+                ? "text-brand-primary font-semibold border-b-2 border-brand-primary"
+                : "text-text-secondary hover:text-text-primary"
+            ]}
+            aria-current={isCurrent ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        );
+      })}
+    </nav>
+
+    <!-- Mobile Navigation Toggle (Pure HTML/CSS Details/Summary, zero-JS accessible) -->
+    <details class="md:hidden relative group">
+      <summary
+        class="list-none cursor-pointer p-2 rounded-sm text-text-primary hover:text-brand-primary focus-visible:outline-2"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="sr-only">Open navigation menu</span>
+        <svg
+          class="w-6 h-6 block group-open:hidden"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg
+          class="w-6 h-6 hidden group-open:block"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </summary>
+
+      <div class="absolute right-0 top-full mt-2 w-48 bg-bg-surface border border-border-strong rounded-md shadow-lg py-2 z-50">
+        <nav aria-label="Mobile Navigation" class="flex flex-col">
+          {site.nav.map((item) => {
+            const itemHref = normalizePath(item.href);
+            const isCurrent = activePath === itemHref;
+
+            return (
+              <a
+                href={item.href}
+                class:list={[
+                  "px-4 py-2 text-sm font-medium transition-colors",
+                  isCurrent
+                    ? "text-brand-primary font-semibold bg-bg-elevated"
+                    : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
+                ]}
+                aria-current={isCurrent ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
+      </div>
+    </details>
+  </div>
+</header>

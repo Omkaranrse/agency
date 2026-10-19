@@ -1,0 +1,67 @@
+---
+import '../styles/tokens.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import rawSiteContent from '../content/site.json';
+import { SiteContentSchema } from '../content/config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const site = SiteContentSchema.parse(rawSiteContent);
+
+const {
+  title,
+  description = site.description,
+  ogImage = site.seo.ogImage || '/favicon.svg',
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${site.clientName}` : site.siteTitle;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://example.com');
+
+// Support theme selection via build-time environment variable or site.json
+const activeTheme = process.env.THEME || site.theme || 'editorial';
+---
+
+<!doctype html>
+<html lang="en" data-theme={activeTheme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl.toString()} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl.toString()} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter Metadata -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {site.seo.twitterHandle && <meta name="twitter:creator" content={site.seo.twitterHandle} />}
+
+    <title>{pageTitle}</title>
+  </head>
+  <body class="bg-bg-base text-text-primary antialiased min-h-screen flex flex-col">
+    <a href="#main-content" class="skip-link">
+      Skip to main content
+    </a>
+
+    <Header currentPath={Astro.url.pathname} />
+
+    <main id="main-content" class="flex-1 w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

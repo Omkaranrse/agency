@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <rect width="800" height="450" fill="#E6E1D8"/>
+  <rect x="40" y="40" width="720" height="370" rx="4" fill="#FFFFFF" stroke="#C4BCAC" stroke-width="2"/>
+  <rect x="80" y="80" width="280" height="130" rx="4" fill="#F9F8F6" stroke="#C4BCAC" stroke-width="2"/>
+  <text x="100" y="125" font-family="'Poppins', sans-serif" font-size="18" font-weight="600" fill="#1C1B19">Host Environment</text>
+  <text x="100" y="155" font-family="'Poppins', sans-serif" font-size="14" fill="#726F68">Hardened Host Boundary</text>
+  <text x="100" y="180" font-family="'Poppins', sans-serif" font-size="14" fill="#9C4126">No Docker Socket Mount</text>
+  <rect x="440" y="80" width="280" height="130" rx="4" fill="#F9F8F6" stroke="#9C4126" stroke-width="2"/>
+  <text x="460" y="125" font-family="'Poppins', sans-serif" font-size="18" font-weight="600" fill="#1C1B19">Isolated Sandbox</text>
+  <text x="460" y="155" font-family="'Poppins', sans-serif" font-size="14" fill="#726F68">Unprivileged user: 1000</text>
+  <text x="460" y="180" font-family="'Poppins', sans-serif" font-size="14" fill="#9C4126">Network: None | Cap: Dropped</text>
+  <rect x="80" y="240" width="640" height="130" rx="4" fill="#F9F8F6" stroke="#C4BCAC" stroke-width="2"/>
+  <text x="100" y="285" font-family="'Poppins', sans-serif" font-size="18" font-weight="600" fill="#1C1B19">Kestrel Build Runner — Container Isolation</text>
+  <text x="100" y="320" font-family="'Poppins', sans-serif" font-size="14" fill="#484642">Path traversal prevention, memory quotas, and automated container cleanup.</text>
+</svg>

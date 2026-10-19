@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <rect width="800" height="450" fill="#E6E1D8"/>
+  <rect x="40" y="40" width="720" height="370" rx="4" fill="#FFFFFF" stroke="#C4BCAC" stroke-width="2"/>
+  <rect x="80" y="80" width="640" height="180" rx="4" fill="#F9F8F6" stroke="#C4BCAC" stroke-width="2"/>
+  <line x1="120" y1="200" x2="220" y2="140" stroke="#9C4126" stroke-width="3"/>
+  <circle cx="220" cy="140" r="5" fill="#9C4126"/>
+  <line x1="220" y1="140" x2="340" y2="180" stroke="#9C4126" stroke-width="3"/>
+  <circle cx="340" cy="180" r="5" fill="#9C4126"/>
+  <line x1="340" y1="180" x2="480" y2="110" stroke="#9C4126" stroke-width="3"/>
+  <circle cx="480" cy="110" r="5" fill="#9C4126"/>
+  <line x1="480" y1="110" x2="640" y2="130" stroke="#9C4126" stroke-width="3"/>
+  <circle cx="640" cy="130" r="5" fill="#9C4126"/>
+  <text x="100" y="300" font-family="'Poppins', sans-serif" font-size="18" font-weight="600" fill="#1C1B19">Vanguard Telemetry Engine</text>
+  <text x="100" y="335" font-family="'Poppins', sans-serif" font-size="14" fill="#484642">Real-time system telemetry processing with low-latency metrics collection.</text>
+</svg>

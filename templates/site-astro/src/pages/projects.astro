@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import rawProjectsContent from '../content/projects.json';
+import { ProjectsContentSchema } from '../content/config';
+
+const { title, subtitle, projects } = ProjectsContentSchema.parse(rawProjectsContent);
+---
+
+<BaseLayout title="Projects" description={subtitle}>
+  <section class="max-w-3xl mb-12 sm:mb-16">
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-text-primary mb-4">
+      {title}
+    </h1>
+    <p class="text-base sm:text-lg lg:text-xl text-text-secondary leading-relaxed">
+      {subtitle}
+    </p>
+  </section>
+
+  {projects.length > 0 ? (
+    <ProjectGrid projects={projects} featuredOnly={false} />
+  ) : (
+    <div class="p-12 text-center rounded-lg bg-bg-surface border border-border-subtle text-text-secondary">
+      <p class="text-lg font-medium mb-2">No projects documented yet.</p>
+      <p class="text-sm">Check back shortly for new case studies and platform releases.</p>
+    </div>
+  )}
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import type { AboutContent } from '../content/config';
+
+interface Props {
+  items: AboutContent['timeline'];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="relative border-l-2 border-border-strong ml-3 sm:ml-4 pl-6 sm:pl-8 space-y-8 sm:space-y-12">
+  {items.map((item) => (
+    <div class="relative">
+      <!-- Bullet indicator -->
+      <div
+        class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full bg-brand-primary border-2 border-bg-surface"
+        aria-hidden="true"
+      />
+
+      <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-2">
+        <h3 class="text-lg sm:text-xl font-bold text-text-primary">
+          {item.role}
+        </h3>
+        <span class="text-xs sm:text-sm font-semibold text-brand-primary">
+          {item.period}
+        </span>
+      </div>
+
+      <div class="text-sm font-medium text-text-secondary mb-3">
+        {item.organization}
+      </div>
+
+      <p class="text-sm sm:text-base text-text-secondary leading-relaxed">
+        {item.description}
+      </p>
+    </div>
+  ))}
+</div>

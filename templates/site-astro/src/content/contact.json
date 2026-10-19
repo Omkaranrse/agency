@@ -1,0 +1,15 @@
+{
+  "title": "Contact & Inquiries",
+  "description": "Have an architectural inquiry, consulting project, or technical question? Send a message below.",
+  "email": "devon.miller@example.com",
+  "mode": "static",
+  "form": {
+    "nameLabel": "Your Name",
+    "emailLabel": "Your Email Address",
+    "messageLabel": "Project Summary or Inquiry",
+    "submitLabel": "Send Message",
+    "privacyNote": "Your contact information is only used to respond to your inquiry and is never shared.",
+    "staticModeNotice": "Notice: This template is in demonstration mode. Submissions are not transmitted over the network.",
+    "successMessage": "Thank you! Your inquiry has been prepared for transmission."
+  }
+}

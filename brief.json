@@ -1,0 +1,16 @@
+{
+  "client_name": "Devon Miller",
+  "site_type": "Portfolio",
+  "pages": [
+    "Home",
+    "About",
+    "Projects",
+    "Contact"
+  ],
+  "tone": "editorial",
+  "content_notes": "Staff software engineer and distributed systems architect with eight years of experience building accessible frontend interfaces and resilient cloud systems. Emphasizes clean architecture, static verification, and web standards.",
+  "links": [
+    "https://github.com/devonmiller",
+    "https://linkedin.com/in/devonmiller"
+  ]
+}

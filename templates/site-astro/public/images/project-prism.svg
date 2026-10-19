@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <rect width="800" height="450" fill="#E6E1D8"/>
+  <rect x="40" y="40" width="720" height="370" rx="4" fill="#FFFFFF" stroke="#C4BCAC" stroke-width="2"/>
+  <rect x="80" y="80" width="180" height="80" rx="2" fill="#9C4126"/>
+  <text x="170" y="125" font-family="'Poppins', sans-serif" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">Primary Token</text>
+  <rect x="280" y="80" width="180" height="80" rx="2" fill="#7D321C"/>
+  <text x="370" y="125" font-family="'Poppins', sans-serif" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">Hover Token</text>
+  <rect x="480" y="80" width="180" height="80" rx="2" fill="#EADFD9" stroke="#9C4126" stroke-width="2"/>
+  <text x="570" y="125" font-family="'Poppins', sans-serif" font-size="16" font-weight="600" fill="#1C1B19" text-anchor="middle">Muted Token</text>
+  <rect x="80" y="190" width="640" height="180" rx="4" fill="#F9F8F6" stroke="#C4BCAC" stroke-width="2"/>
+  <text x="100" y="235" font-family="'Poppins', sans-serif" font-size="18" font-weight="600" fill="#1C1B19">Prism Design System — WCAG 2.2 AA Conformance</text>
+  <text x="100" y="275" font-family="'Poppins', sans-serif" font-size="14" fill="#484642">Accessible color contrast ratios, visible keyboard focus indicators, and semantic tokens.</text>
+  <text x="100" y="310" font-family="'Poppins', sans-serif" font-size="14" fill="#726F68">Single source of truth via CSS custom properties across components.</text>
+</svg>

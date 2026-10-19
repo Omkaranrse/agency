@@ -1,0 +1,28 @@
+{
+  "clientName": "Devon Miller",
+  "siteTitle": "Devon Miller — Full-Stack Systems Engineer & Product Architect",
+  "description": "Portfolio of Devon Miller, specializing in TypeScript, distributed systems, clean architecture, and accessible web platforms.",
+  "theme": "editorial",
+  "nav": [
+    { "label": "Home", "href": "/" },
+    { "label": "About", "href": "/about" },
+    { "label": "Projects", "href": "/projects" },
+    { "label": "Contact", "href": "/contact" }
+  ],
+  "footerText": "© 2026 Devon Miller. Built with Astro & Clean Architecture.",
+  "socialLinks": [
+    {
+      "platform": "GitHub",
+      "url": "https://github.com",
+      "label": "Visit GitHub profile"
+    },
+    {
+      "platform": "LinkedIn",
+      "url": "https://linkedin.com",
+      "label": "Connect on LinkedIn"
+    }
+  ],
+  "seo": {
+    "twitterHandle": "@devonmiller"
+  }
+}

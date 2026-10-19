@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <rect width="800" height="450" fill="#E6E1D8"/>
+  <rect x="40" y="40" width="720" height="370" rx="4" fill="#FFFFFF" stroke="#C4BCAC" stroke-width="2"/>
+  <rect x="80" y="80" width="280" height="120" rx="4" fill="#F9F8F6" stroke="#9C4126" stroke-width="2"/>
+  <text x="100" y="130" font-family="'Poppins', sans-serif" font-size="20" font-weight="600" fill="#1C1B19">Event Ingestion</text>
+  <text x="100" y="165" font-family="'Poppins', sans-serif" font-size="14" fill="#726F68">Deterministic State Queue</text>
+  <line x1="360" y1="140" x2="440" y2="140" stroke="#9C4126" stroke-width="3" stroke-dasharray="6 4"/>
+  <polygon points="440,140 430,135 430,145" fill="#9C4126"/>
+  <rect x="440" y="80" width="280" height="120" rx="4" fill="#F9F8F6" stroke="#9C4126" stroke-width="2"/>
+  <text x="460" y="130" font-family="'Poppins', sans-serif" font-size="20" font-weight="600" fill="#1C1B19">State Machine Core</text>
+  <text x="460" y="165" font-family="'Poppins', sans-serif" font-size="14" fill="#726F68">Clean Architecture Engine</text>
+  <rect x="80" y="240" width="640" height="130" rx="4" fill="#F9F8F6" stroke="#C4BCAC" stroke-width="2"/>
+  <text x="100" y="280" font-family="'Poppins', sans-serif" font-size="16" font-weight="600" fill="#1C1B19">Sentinel Core — Architecture Overview</text>
+  <text x="100" y="315" font-family="'Poppins', sans-serif" font-size="14" fill="#484642">Resilient distributed state transitions with in-memory double fakes and strict persistence contracts.</text>
+</svg>

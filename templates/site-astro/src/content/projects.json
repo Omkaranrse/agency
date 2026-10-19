@@ -1,0 +1,54 @@
+{
+  "title": "Projects & Case Studies",
+  "subtitle": "Detailed documentation of software platforms, tools, and libraries built for real-world impact.",
+  "projects": [
+    {
+      "title": "Sentinel Core",
+      "slug": "sentinel-core",
+      "shortDescription": "Distributed event-driven orchestration engine with observable state machine boundaries.",
+      "detailedDescription": "An enterprise-grade orchestration runtime implementing Clean Architecture and strict static typing. Coordinates long-running workflows with deterministic state persistence and recovery guarantees.",
+      "techTags": ["TypeScript", "Node.js", "Docker", "State Machines"],
+      "image": "/images/project-sentinel.svg",
+      "imageAlt": "Architectural diagram showing state machine event transitions and database isolation boundaries in Sentinel Core",
+      "liveDemoUrl": "https://example.com/demo/sentinel",
+      "sourceCodeUrl": "https://github.com/example/sentinel-core",
+      "featured": true
+    },
+    {
+      "title": "Prism Design System",
+      "slug": "prism-design-system",
+      "shortDescription": "Zero-dependency accessible component tokens and semantic layout engine for enterprise web apps.",
+      "detailedDescription": "A multi-brand design system built entirely with CSS custom properties and WCAG 2.2 AA compliant markup. Features high-contrast themes, keyboard trap prevention, and complete screen-reader compatibility.",
+      "techTags": ["Astro", "Tailwind CSS", "WCAG 2.2 AA", "Design Tokens"],
+      "image": "/images/project-prism.svg",
+      "imageAlt": "Visual token hierarchy preview displaying color scales, typography scales, and keyboard focus states in Prism",
+      "liveDemoUrl": "https://example.com/demo/prism",
+      "sourceCodeUrl": "https://github.com/example/prism-tokens",
+      "featured": true
+    },
+    {
+      "title": "Vanguard Metrics",
+      "slug": "vanguard-metrics",
+      "shortDescription": "Real-time telemetry aggregator processing system events with low-latency in-memory buffers.",
+      "detailedDescription": "High-throughput monitoring daemon designed for microservices deployed across heterogeneous container environments. Exports OpenTelemetry standard metrics with minimal CPU footprint.",
+      "techTags": ["Python 3.12", "Prometheus", "OpenTelemetry", "Linux"],
+      "image": "/images/project-vanguard.svg",
+      "imageAlt": "Metrics dashboard overview illustrating real-time request rates, latency percentiles, and error tracking",
+      "liveDemoUrl": "https://example.com/demo/vanguard",
+      "sourceCodeUrl": "",
+      "featured": false
+    },
+    {
+      "title": "Kestrel Build Runner",
+      "slug": "kestrel-runner",
+      "shortDescription": "Secure sandbox executor running isolated untrusted scripts inside unprivileged containers.",
+      "detailedDescription": "A hardened execution agent featuring strict path traversal prevention, memory quotas, dropped Linux capabilities, and automated stale-container reclamation.",
+      "techTags": ["Docker SDK", "Linux Security", "Python", "POSIX"],
+      "image": "/images/project-kestrel.svg",
+      "imageAlt": "Security boundary schematic showing sandbox container isolation, memory bounds, and workspace volume mounts",
+      "liveDemoUrl": "",
+      "sourceCodeUrl": "https://github.com/example/kestrel-runner",
+      "featured": false
+    }
+  ]
+}
