@@ -1,0 +1,89 @@
+# ==============================================================================
+# Langfuse Self-Hosted Observability Stack for Agency
+# ==============================================================================
+# Production-ready, pinned self-hosted deployment of Langfuse v2.
+# Usage:
+#   Start:   docker compose -f docker/compose/docker-compose.langfuse.yml up -d
+#   Stop:    docker compose -f docker/compose/docker-compose.langfuse.yml down
+#   Logs:    docker compose -f docker/compose/docker-compose.langfuse.yml logs -f langfuse-server
+# ==============================================================================
+
+services:
+  langfuse-server:
+    image: ghcr.io/langfuse/langfuse:2.100.0
+    container_name: agency-langfuse-server
+    restart: unless-stopped
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+      langfuse-redis:
+        condition: service_healthy
+    ports:
+      - "${LANGFUSE_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: "postgresql://${LANGFUSE_DB_USER:-langfuse}:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-db:5432/${LANGFUSE_DB_NAME:-langfuse}"
+      NEXTAUTH_SECRET: "${LANGFUSE_NEXTAUTH_SECRET:-agency-dev-nextauth-secret-change-in-prod-min-32-chars}"
+      SALT: "${LANGFUSE_SALT:-agency-dev-salt-change-in-prod-min-32-chars}"
+      NEXTAUTH_URL: "${LANGFUSE_NEXTAUTH_URL:-http://localhost:3000}"
+      REDIS_HOST: "langfuse-redis"
+      REDIS_PORT: "6379"
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+      NODE_ENV: "production"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e 'require(\"http\").get(\"http://localhost:3000/api/public/health\", (r) => {if (r.statusCode !== 200) process.exit(1)})'"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  langfuse-worker:
+    image: ghcr.io/langfuse/langfuse-worker:2.100.0
+    container_name: agency-langfuse-worker
+    restart: unless-stopped
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+      langfuse-redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://${LANGFUSE_DB_USER:-langfuse}:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-db:5432/${LANGFUSE_DB_NAME:-langfuse}"
+      REDIS_HOST: "langfuse-redis"
+      REDIS_PORT: "6379"
+      SALT: "${LANGFUSE_SALT:-agency-dev-salt-change-in-prod-min-32-chars}"
+      TELEMETRY_ENABLED: "false"
+      NODE_ENV: "production"
+
+  langfuse-db:
+    image: postgres:16-alpine
+    container_name: agency-langfuse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "${LANGFUSE_DB_USER:-langfuse}"
+      POSTGRES_PASSWORD: "${LANGFUSE_DB_PASSWORD:-langfuse}"
+      POSTGRES_DB: "${LANGFUSE_DB_NAME:-langfuse}"
+    volumes:
+      - langfuse_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LANGFUSE_DB_USER:-langfuse} -d ${LANGFUSE_DB_NAME:-langfuse}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  langfuse-redis:
+    image: redis:7-alpine
+    container_name: agency-langfuse-redis
+    restart: unless-stopped
+    volumes:
+      - langfuse_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  langfuse_postgres_data:
+    name: agency_langfuse_postgres_data
+  langfuse_redis_data:
+    name: agency_langfuse_redis_data

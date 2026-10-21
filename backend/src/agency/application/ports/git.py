@@ -27,6 +27,9 @@ class GitRepoInfo(BaseModel):
     default_branch: str = Field(default="main")
     current_commit: str = Field(min_length=7, max_length=40)
     branches: list[str] = Field(default_factory=list)
+    repo_name: str | None = None
+    repo_url: str | None = None
+    owner: str | None = None
 
 
 class GitPort(ABC):
@@ -59,12 +62,37 @@ class GitPort(ABC):
         message: str,
         branch: str = "main",
         author: str = "Agency AI",
+        files: dict[str, str | bytes] | None = None,
     ) -> GitCommitInfo:
         """Record a commit with the specified message on the target branch.
+
+        Args:
+            project_id: Unique project identifier.
+            message: Commit message.
+            branch: Target branch name.
+            author: Commit author name.
+            files: Optional mapping of relative file paths to content.
 
         Raises:
             GitError: If the repository or branch does not exist or commit fails.
         """
+
+    def publish_source(
+        self,
+        project_id: str,
+        files: dict[str, str | bytes],
+        message: str,
+        branch: str = "main",
+        author: str = "Agency AI",
+    ) -> GitCommitInfo:
+        """Publish verified project source files into the repository."""
+        return self.commit_changes(
+            project_id=project_id,
+            message=message,
+            branch=branch,
+            author=author,
+            files=files,
+        )
 
     @abstractmethod
     def get_commit_info(self, project_id: str, commit_sha: str) -> GitCommitInfo:

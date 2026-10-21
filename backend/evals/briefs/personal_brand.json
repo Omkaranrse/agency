@@ -1,0 +1,17 @@
+{
+  "client_name": "Dr. Elena Rostova",
+  "site_type": "Personal Brand",
+  "pages": [
+    "Home",
+    "Speaking",
+    "Publications",
+    "Podcast",
+    "Contact"
+  ],
+  "tone": "inspiring",
+  "content_notes": "Cognitive neuroscientist, keynote speaker, and bestselling author on decision architecture, organizational resilience, and mental well-being in distributed remote teams.",
+  "links": [
+    "https://elenarostova.org",
+    "https://youtube.com/@drelenarostova"
+  ]
+}

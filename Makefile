@@ -1,4 +1,4 @@
-.PHONY: help install-dev lint format typecheck test check pre-commit-install clean
+.PHONY: help install-dev lint format typecheck test check pre-commit-install clean serve dashboard
 
 PYTHON ?= python3.12
 VENV ?= .venv
@@ -29,6 +29,8 @@ help:
 	@echo "  make typecheck          - Run mypy strict type checks"
 	@echo "  make test               - Run unit tests with pytest"
 	@echo "  make check              - Run lint, typecheck, and test checks sequentially"
+	@echo "  make serve              - Start the FastAPI backend server (http://localhost:8000)"
+	@echo "  make dashboard          - Start the Next.js operator dashboard (http://localhost:3000)"
 	@echo "  make pre-commit-install - Install Git pre-commit hooks"
 	@echo "  make clean              - Remove virtualenv and temporary cache artifacts"
 
@@ -58,6 +60,12 @@ test:
 	cd backend && $(PYTEST) tests
 
 check: lint typecheck test
+
+serve:
+	PYTHONPATH=backend/src:backend $(BIN)uvicorn agency.interfaces.api.app:create_app --factory --host 0.0.0.0 --port 8000 --reload
+
+dashboard:
+	cd dashboard && pnpm dev
 
 pre-commit-install:
 	$(PRE_COMMIT) install

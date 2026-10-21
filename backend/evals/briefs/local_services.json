@@ -1,0 +1,18 @@
+{
+  "client_name": "Apex Mountain HVAC & Plumbing",
+  "site_type": "Services",
+  "pages": [
+    "Home",
+    "Heating",
+    "Cooling",
+    "Plumbing",
+    "Emergency",
+    "Contact"
+  ],
+  "tone": "trustworthy",
+  "content_notes": "Family-owned and operated licensed mechanical contracting company serving residential and commercial clients in Denver and Boulder for over 25 years. 24/7 emergency response and upfront pricing.",
+  "links": [
+    "https://apexmountainhvac.com",
+    "https://google.com/maps?cid=apexmountain"
+  ]
+}

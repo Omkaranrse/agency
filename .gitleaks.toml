@@ -1,0 +1,30 @@
+# ==============================================================================
+# Gitleaks Configuration for Agency
+# Scans repository files for committed secrets, tokens, and private keys.
+# ==============================================================================
+
+title = "Agency Secret Scanning Policy"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allowlists for test fixtures and simulated development keys"
+paths = [
+  '''^\.env\.example$''',
+  '''^docker/compose/.*''',
+  '''^docker-compose\.yml$''',
+  '''^backend/tests/fakes/.*''',
+  '''^backend/tests/.*''',
+  '''^docs/.*''',
+]
+
+regexes = [
+  '''agency-secret-key-12345''',
+  '''agency-dev-nextauth-secret-change-in-prod-min-32-chars''',
+  '''agency-dev-salt-change-in-prod-min-32-chars''',
+  '''pk-lf-local''',
+  '''sk-lf-local''',
+  '''fake-test-token''',
+  '''ghp_000000000000000000000000000000000000''',
+]

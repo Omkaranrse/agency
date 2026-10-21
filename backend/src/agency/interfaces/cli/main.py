@@ -40,9 +40,11 @@ def _create_default_sandbox() -> SandboxPort:
 
 def _create_default_repository() -> RunRepositoryPort:
     """Create a default in-memory repository for CLI lifecycle tracking."""
-    from tests.fakes.fake_run_repository import FakeRunRepository
+    from agency.infrastructure.persistence.in_memory_run_repository import (
+        InMemoryRunRepository,
+    )
 
-    return FakeRunRepository()
+    return InMemoryRunRepository()
 
 
 def _create_default_event_bus() -> EventBusPort:
@@ -96,6 +98,123 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional project ID override",
     )
 
+    # Command: agency export-openapi
+    openapi_parser = subparsers.add_parser(
+        "export-openapi",
+        help="Export the OpenAPI JSON schema to a file",
+    )
+    openapi_parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        default=Path("docs/openapi.json"),
+        help="Output path for OpenAPI JSON (defaults to docs/openapi.json)",
+    )
+
+    # Command: agency eval
+    eval_parser = subparsers.add_parser(
+        "eval",
+        help="Evaluation framework commands for website generation quality",
+    )
+    eval_subparsers = eval_parser.add_subparsers(
+        dest="eval_subcommand", help="Evaluation subcommands"
+    )
+
+    # agency eval run
+    eval_run_parser = eval_subparsers.add_parser(
+        "run",
+        help="Run evaluations against test briefs",
+    )
+    eval_run_parser.add_argument(
+        "--mode",
+        choices=["fake", "real"],
+        default="fake",
+        help="Evaluation execution mode ('fake' or 'real')",
+    )
+    eval_run_parser.add_argument(
+        "--dataset",
+        type=Path,
+        default=None,
+        help="Path to evaluation dataset directory containing briefs",
+    )
+    eval_run_parser.add_argument(
+        "--brief",
+        type=str,
+        default=None,
+        help="Target individual brief name (e.g. 'developer')",
+    )
+    eval_run_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("runs/evals"),
+        help="Directory to save evaluation reports",
+    )
+    eval_run_parser.add_argument(
+        "--max-budget",
+        type=float,
+        default=None,
+        help="Maximum budget in USD for real LLM evaluations",
+    )
+
+    # agency eval report
+    eval_report_parser = eval_subparsers.add_parser(
+        "report",
+        help="Display or locate reports for an evaluation run",
+    )
+    eval_report_parser.add_argument(
+        "--run-id",
+        required=True,
+        help="Evaluation run ID to locate report for",
+    )
+    eval_report_parser.add_argument(
+        "--runs-dir",
+        type=Path,
+        default=Path("runs/evals"),
+        help="Directory where evaluation reports are stored",
+    )
+
+    # agency cleanup
+    cleanup_parser = subparsers.add_parser(
+        "cleanup",
+        help="Purge orphaned sandbox containers and expired temporary workspaces",
+    )
+    cleanup_parser.add_argument(
+        "--retention-hours",
+        type=float,
+        default=24.0,
+        help="Prune temporary resources older than this threshold in hours",
+    )
+    cleanup_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=False,
+        help="Report resources eligible for removal without destroying them",
+    )
+
+    # agency serve
+    serve_parser = subparsers.add_parser(
+        "serve",
+        help="Start the Agency FastAPI REST API server",
+    )
+    serve_parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="Bind socket host (defaults to 0.0.0.0)",
+    )
+    serve_parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="Bind socket port (defaults to 8000)",
+    )
+    serve_parser.add_argument(
+        "--reload",
+        action="store_true",
+        default=False,
+        help="Enable auto-reload on source file changes",
+    )
+
     return parser
 
 
@@ -114,6 +233,131 @@ def main(
 
     if not args.subcommand:
         parser.print_help()
+        return 0
+
+    if args.subcommand == "serve":
+        import uvicorn
+
+        sys.stdout.write(
+            f"Starting Agency API server on {args.host}:{args.port} "
+            f"(reload={args.reload})...\n"
+        )
+        uvicorn.run(
+            "agency.interfaces.api.app:create_app",
+            factory=True,
+            host=args.host,
+            port=args.port,
+            reload=args.reload,
+        )
+        return 0
+
+    if args.subcommand == "export-openapi":
+        from agency.interfaces.api.openapi import export_openapi_json
+
+        out_file = export_openapi_json(args.output)
+        sys.stdout.write(f"OpenAPI schema successfully exported to: {out_file}\n")
+        return 0
+
+    if args.subcommand == "eval":
+        if not getattr(args, "eval_subcommand", None):
+            parser.parse_args(["eval", "--help"])
+            return 0
+
+        if args.eval_subcommand == "run":
+            from evals.runner import EvaluationRunner
+
+            runner = EvaluationRunner(
+                dataset_dir=args.dataset,
+                output_base_dir=args.output_dir,
+                mode=args.mode,
+            )
+            summary = runner.run_suite(
+                target_brief_id=args.brief,
+                max_budget_usd=args.max_budget,
+            )
+            out_dir = args.output_dir / summary.eval_run_id
+            sys.stdout.write(
+                "\n=======================================================\n"
+            )
+            sys.stdout.write(f"  AGENCY EVALUATION COMPLETED: {summary.eval_run_id}\n")
+            sys.stdout.write(
+                "=======================================================\n"
+            )
+            sys.stdout.write(f"Mode:             {summary.mode}\n")
+            sys.stdout.write(f"Briefs Evaluated: {summary.briefs_attempted}\n")
+            build_stat = (
+                f"{summary.successful_builds}/{summary.briefs_attempted} "
+                f"({summary.build_success_rate * 100:.1f}%)"
+            )
+            sys.stdout.write(f"Build Success:    {build_stat}\n")
+            sys.stdout.write(f"QA Pass Rate:     {summary.qa_pass_rate * 100:.1f}%\n")
+            sys.stdout.write(f"Avg Duration:     {summary.avg_duration_seconds:.2f}s\n")
+            sys.stdout.write(f"Avg Copy Quality: {summary.avg_copy_quality:.1f}/10.0\n")
+            sys.stdout.write(
+                f"Actual Cost:      ${summary.total_actual_cost_usd:.4f}\n"
+            )
+            sys.stdout.write(
+                f"Estimated Cost:   ${summary.total_estimated_cost_usd:.4f}\n"
+            )
+            sys.stdout.write(f"Reports Written:  {out_dir}\n")
+            sys.stdout.write(f"  - Markdown:     {out_dir / 'report.md'}\n")
+            sys.stdout.write(f"  - CSV:          {out_dir / 'results.csv'}\n")
+            sys.stdout.write(
+                "=======================================================\n"
+            )
+            return 0 if summary.failed_evaluations_count == 0 else 1
+
+        if args.eval_subcommand == "report":
+            report_dir = args.runs_dir / args.run_id
+            md_file = report_dir / "report.md"
+            if not md_file.exists():
+                sys.stderr.write(
+                    f"Error: Report for run ID '{args.run_id}' not found "
+                    f"at '{report_dir}'.\n"
+                )
+                return 1
+            sys.stdout.write(md_file.read_text(encoding="utf-8"))
+            return 0
+
+    if args.subcommand == "cleanup":
+        from agency.application.services.cleanup_service import CleanupService
+
+        repo = repository or _create_default_repository()
+        service = CleanupService(repository=repo)
+        cleanup_summary = service.run_cleanup(
+            retention_hours=args.retention_hours,
+            dry_run=args.dry_run,
+        )
+
+        sys.stdout.write("\n=======================================================\n")
+        mode_str = "DRY-RUN (Simulated)" if cleanup_summary.dry_run else "ACTIVE"
+        sys.stdout.write(f"  AGENCY MAINTENANCE CLEANUP: {mode_str}\n")
+        sys.stdout.write("=======================================================\n")
+        sys.stdout.write(
+            f"Active Runs Protected:   {cleanup_summary.active_runs_protected}\n"
+        )
+        sys.stdout.write(
+            f"Containers Inspected:    {cleanup_summary.containers_inspected}\n"
+        )
+        sys.stdout.write(
+            f"Containers Removed:      {len(cleanup_summary.containers_removed)}\n"
+        )
+        sys.stdout.write(
+            f"Workspaces Inspected:    {cleanup_summary.workspaces_inspected}\n"
+        )
+        sys.stdout.write(
+            f"Workspaces Removed:      {len(cleanup_summary.workspaces_removed)}\n"
+        )
+        sys.stdout.write(
+            f"Bytes Reclaimed:         {cleanup_summary.bytes_reclaimed:,} bytes\n"
+        )
+        if cleanup_summary.errors:
+            sys.stdout.write(
+                f"Errors Encountered:      {len(cleanup_summary.errors)}\n"
+            )
+            for err in cleanup_summary.errors:
+                sys.stdout.write(f"  - {err}\n")
+        sys.stdout.write("=======================================================\n")
         return 0
 
     if args.subcommand == "run":
@@ -151,9 +395,9 @@ def main(
             brief = Brief.model_validate(data)
         except ValidationError as exc:
             sys.stderr.write(f"Error: Brief file '{brief_path}' failed validation:\n")
-            for err in exc.errors():
-                loc = ".".join(str(p) for p in err.get("loc", []))
-                msg = err.get("msg", "")
+            for val_err in exc.errors():
+                loc = ".".join(str(p) for p in val_err.get("loc", []))
+                msg = val_err.get("msg", "")
                 sys.stderr.write(f"  - {loc}: {msg}\n")
             return 1
 

@@ -14,6 +14,7 @@ class Deployment(BaseModel):
     production_url: HttpUrl | None = None
     provider: str = Field(min_length=1, max_length=100)
     deployed_at: datetime
+    deployment_id: str | None = None
 
     @field_validator("provider", mode="before")
     @classmethod

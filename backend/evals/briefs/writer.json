@@ -1,0 +1,17 @@
+{
+  "client_name": "Julian Sterling",
+  "site_type": "Portfolio",
+  "pages": [
+    "Home",
+    "Articles",
+    "Essays",
+    "Bio",
+    "Contact"
+  ],
+  "tone": "editorial",
+  "content_notes": "Investigative essayist and technology copywriter. Writes on algorithmic ethics, digital labor, and urban history for publications like The Atlantic and Wired. Offers editorial consulting and narrative strategy.",
+  "links": [
+    "https://substack.com/@juliansterling",
+    "https://juliansterling.com"
+  ]
+}

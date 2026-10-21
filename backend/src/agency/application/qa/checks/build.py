@@ -68,6 +68,7 @@ class BuildCheck:
             build_ok = context.build_ok
             exit_code = context.build_exit_code
             raw_logs = context.build_logs
+            artifacts = context.artifacts
         elif (
             context.dist_dir
             or context.site_dir

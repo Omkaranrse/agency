@@ -55,6 +55,13 @@ htmlcov/
 *.cert
 *.crt
 
+# Runtime data and artifacts
+data/
+artifacts/
+*.sqlite
+*.sqlite3
+*.db
+
 # Node and frontend build artifacts
 node_modules/
 .next/

@@ -1,0 +1,17 @@
+{
+  "client_name": "Samira Chen",
+  "site_type": "Portfolio",
+  "pages": [
+    "Home",
+    "Services",
+    "Case Studies",
+    "About",
+    "Contact"
+  ],
+  "tone": "professional",
+  "content_notes": "Freelance full-stack engineer and technical lead helping venture-backed startups launch MVPs and scale cloud infrastructure. Specializes in Next.js, FastAPI, PostgreSQL, and AWS deployment pipelines.",
+  "links": [
+    "https://github.com/samirachen",
+    "https://linkedin.com/in/samirachen-consulting"
+  ]
+}

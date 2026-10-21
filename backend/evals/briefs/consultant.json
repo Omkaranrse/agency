@@ -1,0 +1,17 @@
+{
+  "client_name": "Marcus Vance Advisors",
+  "site_type": "Business",
+  "pages": [
+    "Home",
+    "Practice Areas",
+    "Insights",
+    "Team",
+    "Contact"
+  ],
+  "tone": "authoritative",
+  "content_notes": "Strategic management advisory firm assisting mid-market manufacturing and logistics companies navigate supply chain decarbonization, automation transitions, and regulatory compliance across Europe and North America.",
+  "links": [
+    "https://linkedin.com/company/marcus-vance-advisors",
+    "https://marcusvanceadvisors.com"
+  ]
+}

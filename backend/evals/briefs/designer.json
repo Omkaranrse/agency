@@ -1,0 +1,17 @@
+{
+  "client_name": "Aria Thorne",
+  "site_type": "Portfolio",
+  "pages": [
+    "Home",
+    "Work",
+    "About",
+    "Process",
+    "Contact"
+  ],
+  "tone": "minimal",
+  "content_notes": "Product and design systems specialist focused on accessible interfaces, design engineering, and enterprise workflows. Led component library redesigns for fintech and healthcare SaaS platforms with measurable usability improvements.",
+  "links": [
+    "https://dribbble.com/ariathorne",
+    "https://linkedin.com/in/ariathorne"
+  ]
+}

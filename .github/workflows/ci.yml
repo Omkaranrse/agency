@@ -1,0 +1,121 @@
+name: CI Pipeline & Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-backend:
+    name: Backend Lint, Type Check & Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e "./backend[dev]"
+
+      - name: Ruff Linting
+        run: ruff check backend
+
+      - name: Ruff Formatting Check
+        run: ruff format --check backend
+
+      - name: Mypy Strict Mode
+        run: |
+          cd backend
+          python -m mypy src evals tests
+
+      - name: Run Pytest Suite
+        run: |
+          pytest backend/tests -v
+
+  nextjs-dashboard:
+    name: Dashboard Lint, Types, Tests & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.2
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: dashboard/pnpm-lock.yaml
+
+      - name: Install Dashboard Dependencies
+        run: |
+          cd dashboard
+          pnpm install --frozen-lockfile
+
+      - name: Dashboard ESLint
+        run: |
+          cd dashboard
+          pnpm lint
+
+      - name: Dashboard TypeScript Check
+        run: |
+          cd dashboard
+          pnpm typecheck
+
+      - name: Dashboard Unit & Component Tests
+        run: |
+          cd dashboard
+          pnpm test
+
+      - name: Dashboard Production Build
+        run: |
+          cd dashboard
+          pnpm build
+
+  security-and-delivery:
+    name: Security Scans & Docker Compose Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+      - name: Validate Docker Compose Configuration
+        run: |
+          docker compose config --quiet
+
+      - name: Verify Docker Compose Langfuse Stack
+        run: |
+          docker compose -f docker/compose/docker-compose.langfuse.yml config --quiet

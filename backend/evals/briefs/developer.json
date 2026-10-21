@@ -1,0 +1,16 @@
+{
+  "client_name": "Devon Vance",
+  "site_type": "Portfolio",
+  "pages": [
+    "Home",
+    "About",
+    "Projects",
+    "Contact"
+  ],
+  "tone": "editorial",
+  "content_notes": "Staff distributed systems engineer specializing in high-throughput data processing and clean architecture. Eight years of experience building resilient backend platforms with Go, Python, and Rust. Features case studies on distributed checkpointing, zero-downtime database migrations, and consensus algorithms.",
+  "links": [
+    "https://github.com/devonvance",
+    "https://linkedin.com/in/devonvance-eng"
+  ]
+}

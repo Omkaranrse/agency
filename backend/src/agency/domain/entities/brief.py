@@ -51,3 +51,12 @@ class Brief(BaseModel):
             seen.add(normalized)
             cleaned.append(stripped)
         return cleaned
+
+    @field_validator("links")
+    @classmethod
+    def _validate_safe_links(cls, value: list[HttpUrl]) -> list[HttpUrl]:
+        from agency.domain.security.url_policy import validate_safe_url
+
+        for link in value:
+            validate_safe_url(str(link))
+        return value

@@ -1,0 +1,17 @@
+{
+  "client_name": "Cedar & Stone Bakery",
+  "site_type": "Business",
+  "pages": [
+    "Home",
+    "Menu",
+    "Our Story",
+    "Catering",
+    "Contact"
+  ],
+  "tone": "warm",
+  "content_notes": "Artisanal neighborhood sourdough bakery and espresso bar located in Portland, Oregon. We use 100% organic regionally milled heritage flours, long natural fermentations, and seasonal local ingredients.",
+  "links": [
+    "https://instagram.com/cedarandstonebakery",
+    "https://cedarandstonebakery.example.com"
+  ]
+}

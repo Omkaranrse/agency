@@ -1,0 +1,17 @@
+{
+  "client_name": "Vanguard Motion Lab",
+  "site_type": "Agency",
+  "pages": [
+    "Home",
+    "Showreel",
+    "Capabilities",
+    "Clients",
+    "Contact"
+  ],
+  "tone": "bold",
+  "content_notes": "Independent 3D motion design and experiential brand studio crafting interactive web visuals, CGI title sequences, and physical installation exhibits for progressive global brands.",
+  "links": [
+    "https://vimeo.com/vanguardmotionlab",
+    "https://vanguardmotionlab.studio"
+  ]
+}

@@ -1,124 +1,190 @@
-# Agency
+# Agency — Multi-Agent AI Software Agency
 
-**Agency** is an AI-powered software agency platform designed to transform client briefs into production-grade, full-stack web applications using a controlled, multi-agent workflow.
-
-> [!NOTE]
-> **Phase 0 Status**: The repository is currently in its foundational setup phase. The core directory structure, architectural guidelines, quality tooling, and smoke test suite are established. The AI agents, application APIs, business entities, database repositories, deployment integrations, and dashboard UI have **not yet been implemented**.
-
----
-
-## Architecture Boundaries
-
-Agency follows **Clean Architecture** to maintain strict decoupling between domain logic, orchestration workflows, and external adapters:
-
-- **Domain (`backend/src/agency/domain/`)**: Pure business logic, core entities, domain events, and domain exceptions. Completely independent of frameworks, databases, and external libraries.
-- **Application (`backend/src/agency/application/`)**: Use cases, state orchestration (LangGraph state graphs), and application-defined ports (interfaces).
-- **Infrastructure (`backend/src/agency/infrastructure/`)**: Concrete implementations of application ports, including LLM provider integrations, code execution sandboxes, version control systems (VCS), deployment adapters, persistence, and telemetry/observability.
-- **Interfaces (`backend/src/agency/interfaces/`)**: Inbound entrypoints such as REST/WebSocket APIs (FastAPI) and CLI tooling.
-- **Dependency Inversion**: Dependencies always flow inward toward the domain (`Domain <- Application <- Infrastructure / Interfaces`). API routes and LangGraph nodes delegate execution to use cases rather than embedding business logic.
-
----
-
-## Directory Layout
+**Agency** is an autonomous multi-agent AI software agency that converts client briefs into customized, tested, reviewed, and deployed websites through a controlled delivery pipeline.
 
 ```text
-agency/
-├── AGENTS.md                  # Mandatory engineering rules and architectural standards
-├── README.md                  # Project overview, layout, and setup documentation
-├── .gitignore                 # Exclusions for Python, Node, OS, logs, and secrets
-├── .env.example               # Safe environment variable template (no credentials)
-├── .editorconfig              # Consistent cross-editor whitespace and formatting
-├── .pre-commit-config.yaml    # Git hooks for linting, formatting, and secret checks
-├── Makefile                   # Developer workflows executed from repository root
-├── backend/                   # Python backend package root
-│   ├── pyproject.toml         # Build backend, dependencies, and tool configs
-│   ├── src/
-│   │   └── agency/            # Core Python package root
-│   │       ├── __init__.py    # Exposes package version (0.1.0)
-│   │       ├── domain/        # Entities, events, and domain errors
-│   │       ├── application/   # Use cases, ports, and LangGraph workflow graphs
-│   │       ├── infrastructure/# LLM, sandbox, VCS, deploy, persistence, observability
-│   │       ├── interfaces/    # Inbound entrypoints (FastAPI, CLI)
-│   │       └── config/        # Environment-based configuration models
-│   ├── tests/
-│   │   ├── unit/              # Isolated, fast unit tests (includes test_smoke.py)
-│   │   ├── integration/       # Component and adapter integration tests
-│   │   ├── e2e/               # Full system end-to-end test suites
-│   │   └── fakes/             # In-memory test doubles for external ports
-│   └── evals/                 # Benchmark evals for LLM prompts and agent outputs
-├── templates/
-│   └── site-astro/            # Astro full-stack application template
-├── dashboard/                 # Next.js App Router operator and client UI
-├── docker/
-│   ├── sandbox/               # Isolated code execution container definitions
-│   └── compose/               # Local multi-service compose specifications
-└── docs/
-    ├── architecture/          # Architecture design records and system diagrams
-    ├── adr/                   # Architecture Decision Records
-    └── runbooks/              # Operational and debugging runbooks
+[ Client Brief ]
+       │
+       ▼
+[ Product Manager Agent ] ──> Structured Product Specification
+       │
+       ▼
+[ Designer Agent ]       ──> Curated Design Tokens & Theme
+       │
+       ▼
+[ Prototype & Approval ] ──> Interactive Preview (Awaiting Operator Approval)
+       │
+  ( Approved )
+       ▼
+[ Builder Agent ]        ──> Astro + Tailwind Site Code
+       │
+       ▼
+[ QA Service ]           ──> Automated Playwright, SEO, and Build Checks
+       │
+       ▼
+[ Deployment Adapters ]  ──> GitHub Repo & Cloudflare Pages CDN
+       │
+       ▼
+[ Production Delivery ]  ──> Handover Report & Verified Live URL
 ```
 
 ---
 
-## Prerequisites
+## Key Features
 
-- **Python**: `3.12` (`>=3.12,<3.13` required)
-- **Make**: Standard POSIX `make`
-- **Git**: `>=2.30`
-
----
-
-## Development Setup
-
-1. **Clone the repository**:
-   ```bash
-   git clone <repo-url> agency
-   cd agency
-   ```
-
-2. **Initialize Environment & Dependencies**:
-   ```bash
-   make install-dev
-   ```
-   This will:
-   - Create a local Python 3.12 virtual environment at `.venv/`.
-   - Upgrade `pip` to latest.
-   - Install the `agency` backend package in editable mode (`-e`) along with all developer tooling (`pytest`, `ruff`, `mypy`, `black`, `pre-commit`).
-
-3. **Configure Environment Variables**:
-   ```bash
-   cp .env.example .env
-   # Adjust local values in .env as needed
-   ```
-
-4. **Install Pre-commit Git Hooks**:
-   ```bash
-   make pre-commit-install
-   ```
+- **Clean Architecture**: Domain layer has zero external dependencies; all external systems are abstracted behind ports (`SandboxPort`, `GitPort`, `DeployPort`, `LLMPort`, `TracingPort`).
+- **Stateful Multi-Agent Orchestration**: Stateful pipeline orchestrated via **LangGraph** with durable SQLite checkpointing and explicit pause/resume at the human approval gate.
+- **Isolated Docker Sandboxes**: AI-generated code builds and tests inside unprivileged containers (`user=1000:1000`, `network=none`, `cap_drop=ALL`, hard memory/CPU limits) with path traversal guards.
+- **SSRF Defense Policy**: All user-supplied links and reference URLs are validated against private, loopback, and cloud metadata IP addresses (`169.254.169.254`, `127.0.0.1`, RFC 1918).
+- **FastAPI REST API & SSE**: Streaming domain events via Server-Sent Events with constant-time HMAC API authentication and sliding-window rate limiting.
+- **Next.js Operator Dashboard**: Modern dashboard built with Next.js App Router, Tailwind CSS, and shadcn/ui components for real-time monitoring and approval review.
+- **Observability & Distributed Tracing**: Distributed spans and token tracking via self-hosted **Langfuse**, with automated credential redaction in structured JSON logs.
+- **Repeatable Evaluation Framework**: 12 diverse evaluation briefs measuring build success, QA pass rate, Lighthouse scores, cost, duration, and copy quality.
 
 ---
 
-## Verification & Quality Commands
+## Architecture and System Layout
 
-All commands can be executed directly from the repository root:
+```text
+agency/
+├── AGENTS.md                  # Mandatory engineering and architectural standards
+├── README.md                  # System overview, setup, and operations guide
+├── docker-compose.yml         # Full-stack production & local compose specification
+├── .gitleaks.toml             # Secret scanning configuration
+├── backend/                   # Python backend application
+│   ├── pyproject.toml         # Python packaging, tool configurations, dependencies
+│   ├── Dockerfile             # Multi-stage production container image (Python 3.12-slim)
+│   ├── src/agency/
+│   │   ├── domain/            # Entities (Run, Brief, Specs), state machine, SSRF policy
+│   │   ├── application/       # Use cases, graph nodes, ports, workflow runner supervisor
+│   │   ├── infrastructure/    # Sandbox, VCS (GitHub), Deploy (Cloudflare), LLM, Langfuse
+│   │   └── interfaces/        # FastAPI REST/SSE routes, CLI tooling
+│   ├── tests/                 # Unit, integration, API, and fake test suites
+│   └── evals/                 # 12-brief dataset, scorers, runner, Markdown/CSV reports
+├── dashboard/                 # Next.js 14 operator dashboard
+│   ├── Dockerfile             # Multi-stage production container image (Node.js 20-alpine)
+│   ├── src/                   # App Router pages, components, queries, and mutations
+│   └── tests/                 # Vitest component and schema tests
+├── templates/
+│   └── site-astro/            # Astro + Tailwind static website starter template
+├── docker/
+│   ├── sandbox/               # Isolated code execution container (agency-sandbox:latest)
+│   └── compose/               # Langfuse self-hosting compose stack
+└── docs/
+    ├── architecture.md        # Comprehensive architecture diagram (Mermaid)
+    ├── security.md            # Threat model, attack surfaces, and security controls
+    ├── runbook.md             # Operational procedures, recovery, and diagnostics
+    ├── demo.md                # Repeatable demo script without external credentials
+    ├── production-readiness.md# Evidence-based production readiness assessment
+    ├── adr/                   # Architecture Decision Records (ADR 0001 - 0009)
+    └── openapi.json           # Exported OpenAPI 3.1 specification
+```
 
-- **Run all checks** (linting, type checking, unit tests):
-  ```bash
-  make check
-  ```
-- **Run unit tests**:
-  ```bash
-  make test
-  ```
-- **Run lint checks** (Ruff):
-  ```bash
-  make lint
-  ```
-- **Format code** (Ruff):
-  ```bash
-  make format
-  ```
-- **Run static type checking** (mypy strict mode):
-  ```bash
-  make typecheck
-  ```
+---
+
+## Quick Start (Local Full Stack)
+
+### Prerequisites
+- **Python**: `>=3.12,<3.13`
+- **Node.js**: `>=20` and `pnpm >=9`
+- **Docker**: Docker Engine and Docker Compose
+
+### 1. Launch with Docker Compose
+The easiest way to run the complete stack (Backend, Dashboard, and Langfuse):
+```bash
+# Copy environment configuration
+cp .env.example .env
+
+# Start all containers in the background
+docker compose up -d
+
+# Verify all services are healthy
+docker compose ps
+```
+
+Access services:
+- **Operator Dashboard**: [http://localhost:3000](http://localhost:3000)
+- **FastAPI REST API**: [http://localhost:8000](http://localhost:8000)
+- **API Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Langfuse UI**: [http://localhost:3001](http://localhost:3001)
+
+### 2. Manual Development Setup
+```bash
+# 1. Setup Python virtual environment
+make install-dev
+source .venv/bin/activate
+
+# 2. Start FastAPI API server
+PYTHONPATH=backend/src:backend uvicorn agency.interfaces.api.app:create_app --factory --port 8000 --reload
+
+# 3. Start Next.js Dashboard (in a separate terminal)
+cd dashboard
+pnpm install
+pnpm dev
+```
+
+---
+
+## Quality, Testing, and Verification Commands
+
+Execute quality checks directly from the repository root:
+
+```bash
+# Run all Python backend checks (Ruff lint, formatting, mypy strict, pytest)
+make check
+
+# Run pytest suite
+.venv/bin/pytest backend/tests
+
+# Run Ruff linting and formatting
+.venv/bin/ruff check backend
+.venv/bin/ruff format --check backend
+
+# Run strict type checking (0 errors across 222 source files)
+cd backend && ../.venv/bin/mypy src evals tests
+
+# Run dashboard linting, type checks, and tests
+cd dashboard && pnpm lint && pnpm typecheck && pnpm test
+```
+
+---
+
+## Evaluation Framework
+
+Agency includes a deterministic evaluation suite testing 12 representative client archetypes (developer, designer, photographer, small business, consultant, etc.):
+
+```bash
+# Run all 12 briefs in zero-cost fake mode (no API keys required)
+PYTHONPATH=backend/src:backend python -m agency.interfaces.cli.main eval run --mode fake
+
+# Run a single brief
+PYTHONPATH=backend/src:backend python -m agency.interfaces.cli.main eval run --mode fake --brief developer
+
+# Inspect generated evaluation report
+PYTHONPATH=backend/src:backend python -m agency.interfaces.cli.main eval report --run-id <run-id>
+```
+Evaluation reports are saved to `runs/evals/<run-id>/report.md` and `results.csv`.
+
+---
+
+## Operational Maintenance
+
+### Purge Orphaned Sandbox Containers & Workspaces
+```bash
+# Simulation dry-run
+PYTHONPATH=backend/src:backend python -m agency.interfaces.cli.main cleanup --dry-run --retention-hours 24
+
+# Active purge
+PYTHONPATH=backend/src:backend python -m agency.interfaces.cli.main cleanup --retention-hours 24
+```
+
+---
+
+## Security and Documentation
+
+- [Architecture Diagram (Mermaid)](docs/architecture.md)
+- [Security Threat Model & Defenses](docs/security.md)
+- [Operations Runbook](docs/runbook.md)
+- [Demo Script](docs/demo.md)
+- [Production-Readiness Assessment](docs/production-readiness.md)
+- [Architecture Decision Records (ADRs)](docs/adr/)

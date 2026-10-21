@@ -1,0 +1,1742 @@
+{
+  "components": {
+    "schemas": {
+      "AgentRoleEnum": {
+        "description": "Logical agent and operator roles represented in the virtual office.",
+        "enum": [
+          "manager",
+          "pm",
+          "designer",
+          "builder",
+          "qa",
+          "reviewer",
+          "devops"
+        ],
+        "title": "AgentRoleEnum",
+        "type": "string"
+      },
+      "ApproveRunRequest": {
+        "additionalProperties": false,
+        "description": "Payload to authorize production build and deployment for the current preview.",
+        "properties": {
+          "approver": {
+            "default": "client",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Approver",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "revision": {
+            "description": "Preview revision being approved",
+            "minimum": 0.0,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "title": "ApproveRunRequest",
+        "type": "object"
+      },
+      "ApproveRunResponse": {
+        "additionalProperties": false,
+        "description": "Result returned after approval is successfully accepted.",
+        "properties": {
+          "decision": {
+            "default": "approved",
+            "title": "Decision",
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "status",
+          "revision"
+        ],
+        "title": "ApproveRunResponse",
+        "type": "object"
+      },
+      "ArtifactMetadataDTO": {
+        "additionalProperties": false,
+        "description": "Safe metadata describing an available run artifact.",
+        "properties": {
+          "artifact_id": {
+            "description": "Unique artifact identifier",
+            "title": "Artifact Id",
+            "type": "string"
+          },
+          "artifact_type": {
+            "description": "Approved category of artifact",
+            "title": "Artifact Type",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "display_name": {
+            "description": "User-facing artifact filename",
+            "title": "Display Name",
+            "type": "string"
+          },
+          "download_available": {
+            "default": true,
+            "description": "True if raw file can be downloaded",
+            "title": "Download Available",
+            "type": "boolean"
+          },
+          "mime_type": {
+            "description": "Content MIME type",
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "run_id": {
+            "description": "Associated run identifier",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "size_bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Size in bytes",
+            "title": "Size Bytes"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "run_id",
+          "artifact_type",
+          "display_name",
+          "mime_type"
+        ],
+        "title": "ArtifactMetadataDTO",
+        "type": "object"
+      },
+      "BriefDTO": {
+        "additionalProperties": false,
+        "description": "Input client brief data transfer object.",
+        "properties": {
+          "client_name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Client Name",
+            "type": "string"
+          },
+          "content_notes": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Content Notes",
+            "type": "string"
+          },
+          "links": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "title": "Links",
+            "type": "array"
+          },
+          "pages": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Pages",
+            "type": "array"
+          },
+          "site_type": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Site Type",
+            "type": "string"
+          },
+          "tone": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Tone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_name",
+          "site_type",
+          "pages",
+          "tone",
+          "content_notes"
+        ],
+        "title": "BriefDTO",
+        "type": "object"
+      },
+      "CancelRunRequest": {
+        "additionalProperties": false,
+        "description": "Payload to explicitly abort an active workflow run.",
+        "properties": {
+          "reason": {
+            "default": "Cancelled by user",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "title": "CancelRunRequest",
+        "type": "object"
+      },
+      "CancelRunResponse": {
+        "additionalProperties": false,
+        "description": "Result returned after cancellation is recorded.",
+        "properties": {
+          "cancelled_at": {
+            "format": "date-time",
+            "title": "Cancelled At",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "status",
+          "reason"
+        ],
+        "title": "CancelRunResponse",
+        "type": "object"
+      },
+      "CreateRunRequest": {
+        "additionalProperties": false,
+        "description": "Payload to initiate a new website delivery run.",
+        "properties": {
+          "brief": {
+            "$ref": "#/components/schemas/BriefDTO"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project Id"
+          },
+          "template_variant": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Variant"
+          }
+        },
+        "required": [
+          "brief"
+        ],
+        "title": "CreateRunRequest",
+        "type": "object"
+      },
+      "CreateRunResponse": {
+        "additionalProperties": false,
+        "description": "Response returned when a run creation request is accepted.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_stage": {
+            "title": "Current Stage",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "project_id",
+          "status",
+          "current_stage"
+        ],
+        "title": "CreateRunResponse",
+        "type": "object"
+      },
+      "EmployeeStatusEnum": {
+        "description": "Operational status of an employee character in the office.",
+        "enum": [
+          "idle",
+          "walking",
+          "working",
+          "waiting_approval",
+          "blocked",
+          "reviewing",
+          "completed",
+          "failed"
+        ],
+        "title": "EmployeeStatusEnum",
+        "type": "string"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "description": "Health status response schema.",
+        "properties": {
+          "components": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Components",
+            "type": "object"
+          },
+          "status": {
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "date-time",
+            "title": "Timestamp",
+            "type": "string"
+          }
+        },
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "ListArtifactsResponse": {
+        "additionalProperties": false,
+        "description": "Collection response containing artifact metadata for a run.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ArtifactMetadataDTO"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "ListArtifactsResponse",
+        "type": "object"
+      },
+      "ListRunsResponse": {
+        "additionalProperties": false,
+        "description": "Paginated collection of Run summaries.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "ListRunsResponse",
+        "type": "object"
+      },
+      "ListTasksResponse": {
+        "additionalProperties": false,
+        "description": "External API response schema for listing tasks of a run.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TaskRecordDTO"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total"
+        ],
+        "title": "ListTasksResponse",
+        "type": "object"
+      },
+      "OfficeEmployeeDTO": {
+        "additionalProperties": false,
+        "description": "External API response schema for an employee in the virtual office.",
+        "properties": {
+          "active_task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Task Id"
+          },
+          "avatar": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Avatar",
+            "type": "string"
+          },
+          "completed_steps_count": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Completed Steps Count",
+            "type": "integer"
+          },
+          "current_activity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Activity"
+          },
+          "is_logical_role": {
+            "default": false,
+            "title": "Is Logical Role",
+            "type": "boolean"
+          },
+          "last_active_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Active At"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/AgentRoleEnum"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EmployeeStatusEnum"
+          },
+          "title": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "workstation": {
+            "$ref": "#/components/schemas/WorkstationEnum"
+          }
+        },
+        "required": [
+          "role",
+          "name",
+          "title",
+          "avatar",
+          "workstation",
+          "status"
+        ],
+        "title": "OfficeEmployeeDTO",
+        "type": "object"
+      },
+      "OfficeStateResponse": {
+        "additionalProperties": false,
+        "description": "External API response snapshot for the complete virtual office state.",
+        "properties": {
+          "active_task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Task Id"
+          },
+          "blockers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Blockers",
+            "type": "array"
+          },
+          "current_stage": {
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Current Stage",
+            "type": "string"
+          },
+          "employees": {
+            "items": {
+              "$ref": "#/components/schemas/OfficeEmployeeDTO"
+            },
+            "title": "Employees",
+            "type": "array"
+          },
+          "project_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "run_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Run Id",
+            "type": "string"
+          },
+          "run_status": {
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Run Status",
+            "type": "string"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/TaskRecordDTO"
+            },
+            "title": "Tasks",
+            "type": "array"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "workstations": {
+            "items": {
+              "$ref": "#/components/schemas/WorkstationDTO"
+            },
+            "title": "Workstations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "run_id",
+          "project_id",
+          "run_status",
+          "current_stage",
+          "updated_at"
+        ],
+        "title": "OfficeStateResponse",
+        "type": "object"
+      },
+      "PaginationMeta": {
+        "additionalProperties": false,
+        "description": "Pagination metadata for paginated collection responses.",
+        "properties": {
+          "has_next": {
+            "description": "True if more pages exist",
+            "title": "Has Next",
+            "type": "boolean"
+          },
+          "limit": {
+            "description": "Page limit applied to query",
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "description": "Offset applied to query",
+            "minimum": 0.0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total number of items available",
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "has_next"
+        ],
+        "title": "PaginationMeta",
+        "type": "object"
+      },
+      "ReviseRunRequest": {
+        "additionalProperties": false,
+        "description": "Payload to reject current preview and request targeted modifications.",
+        "properties": {
+          "comment": {
+            "description": "Mandatory actionable feedback for revision",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Comment",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          },
+          "revision": {
+            "description": "Current preview revision to revise",
+            "minimum": 0.0,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision",
+          "comment"
+        ],
+        "title": "ReviseRunRequest",
+        "type": "object"
+      },
+      "ReviseRunResponse": {
+        "additionalProperties": false,
+        "description": "Result returned after revision request is accepted.",
+        "properties": {
+          "comment": {
+            "title": "Comment",
+            "type": "string"
+          },
+          "decision": {
+            "default": "revised",
+            "title": "Decision",
+            "type": "string"
+          },
+          "new_revision": {
+            "title": "New Revision",
+            "type": "integer"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "title": "Recorded At",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "status",
+          "new_revision",
+          "comment"
+        ],
+        "title": "ReviseRunResponse",
+        "type": "object"
+      },
+      "RunResponse": {
+        "additionalProperties": false,
+        "description": "Complete summary view of an agency Run aggregate.",
+        "properties": {
+          "approval_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval State"
+          },
+          "build_summary": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Build Summary"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_revision": {
+            "default": 0,
+            "title": "Current Revision",
+            "type": "integer"
+          },
+          "current_stage": {
+            "title": "Current Stage",
+            "type": "string"
+          },
+          "failure_details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Details"
+          },
+          "preview_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preview Url"
+          },
+          "production_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Production Url"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "qa_summary": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qa Summary"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "project_id",
+          "status",
+          "current_stage",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "RunResponse",
+        "type": "object"
+      },
+      "RunState": {
+        "description": "The explicit states representing a Run lifecycle in the state machine.",
+        "enum": [
+          "CREATED",
+          "PLANNING",
+          "PROTOTYPING",
+          "AWAITING_APPROVAL",
+          "BUILDING",
+          "TESTING",
+          "DEPLOYING",
+          "COMPLETED",
+          "FAILED",
+          "CANCELLED"
+        ],
+        "title": "RunState",
+        "type": "string"
+      },
+      "TaskRecordDTO": {
+        "additionalProperties": false,
+        "description": "External API response schema for a task record.",
+        "properties": {
+          "agent_role": {
+            "$ref": "#/components/schemas/AgentRoleEnum"
+          },
+          "attempt_number": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Attempt Number",
+            "type": "integer"
+          },
+          "blocker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blocker"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "progress_details": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Progress Details"
+          },
+          "related_artifact_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Related Artifact Ids",
+            "type": "array"
+          },
+          "run_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Run Id",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TaskStatusEnum"
+          },
+          "task_type": {
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Task Type",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "agent_role",
+          "task_type",
+          "title",
+          "status"
+        ],
+        "title": "TaskRecordDTO",
+        "type": "object"
+      },
+      "TaskStatusEnum": {
+        "description": "Lifecycle states of an agent's assigned task.",
+        "enum": [
+          "pending",
+          "in_progress",
+          "waiting_approval",
+          "completed",
+          "failed",
+          "blocked"
+        ],
+        "title": "TaskStatusEnum",
+        "type": "string"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "WorkstationDTO": {
+        "additionalProperties": false,
+        "description": "External API response schema for a workstation zone.",
+        "properties": {
+          "active_task_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Task Id"
+          },
+          "assigned_role": {
+            "$ref": "#/components/schemas/AgentRoleEnum"
+          },
+          "description": {
+            "maxLength": 250,
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "$ref": "#/components/schemas/WorkstationEnum"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "queued_task_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Queued Task Ids",
+            "type": "array"
+          },
+          "status": {
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "assigned_role",
+          "status"
+        ],
+        "title": "WorkstationDTO",
+        "type": "object"
+      },
+      "WorkstationEnum": {
+        "description": "Physical office workstation zones corresponding to workflow stages.",
+        "enum": [
+          "manager_desk",
+          "planning_desk",
+          "design_station",
+          "development_station",
+          "qa_station",
+          "review_area",
+          "operations_station"
+        ],
+        "title": "WorkstationEnum",
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "description": "Multi-agent software delivery agency REST API and event streaming.",
+    "title": "Agency API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "root_index__get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Root Index  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Root Index",
+        "tags": [
+          "Root"
+        ]
+      }
+    },
+    "/api/v1/runs": {
+      "get": {
+        "description": "Retrieve a paginated, deterministically sorted list of runs.",
+        "operationId": "list_runs_api_v1_runs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/RunState"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRunsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Runs",
+        "tags": [
+          "Runs"
+        ]
+      },
+      "post": {
+        "description": "Validate client brief, persist initial Run aggregate, and enqueue execution.",
+        "operationId": "create_run_api_v1_runs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateRunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Run",
+        "tags": [
+          "Runs"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}": {
+      "get": {
+        "description": "Retrieve detailed state and metadata for a specific run.",
+        "operationId": "get_run_api_v1_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Run",
+        "tags": [
+          "Runs"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/approve": {
+      "post": {
+        "description": "Submit explicit human approval to resume compilation and deployment.",
+        "operationId": "approve_run_api_v1_runs__run_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApproveRunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Run",
+        "tags": [
+          "Approvals"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/artifacts": {
+      "get": {
+        "description": "List metadata for all approved artifacts produced by a run.",
+        "operationId": "list_run_artifacts_api_v1_runs__run_id__artifacts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListArtifactsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Run Artifacts",
+        "tags": [
+          "Artifacts"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/artifacts/{artifact_id}": {
+      "get": {
+        "description": "Download approved artifact with safe headers and content disposition.",
+        "operationId": "get_run_artifact_api_v1_runs__run_id__artifacts__artifact_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "artifact_id",
+            "required": true,
+            "schema": {
+              "title": "Artifact Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Run Artifact",
+        "tags": [
+          "Artifacts"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/cancel": {
+      "post": {
+        "description": "Request immediate cancellation of an active workflow.",
+        "operationId": "cancel_run_api_v1_runs__run_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelRunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Run",
+        "tags": [
+          "Approvals"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/events": {
+      "get": {
+        "description": "Stream real-time and replayed domain events for a run via Server-Sent Events.",
+        "operationId": "stream_run_events_api_v1_runs__run_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Last-Event-ID",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Last-Event-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stream Run Events",
+        "tags": [
+          "Events"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/office-state": {
+      "get": {
+        "description": "Retrieve the authoritative virtual office snapshot for a specific run.",
+        "operationId": "get_office_state_api_v1_runs__run_id__office_state_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficeStateResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Office State",
+        "tags": [
+          "Office"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/revise": {
+      "post": {
+        "description": "Reject current prototype and request design/copy revisions.",
+        "operationId": "revise_run_api_v1_runs__run_id__revise_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviseRunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviseRunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revise Run",
+        "tags": [
+          "Approvals"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/tasks": {
+      "get": {
+        "description": "Retrieve all assigned tasks and their execution statuses for a specific run.",
+        "operationId": "get_run_tasks_api_v1_runs__run_id__tasks_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListTasksResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Run Tasks",
+        "tags": [
+          "Office"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health Check",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/ready": {
+      "get": {
+        "operationId": "readiness_check_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Readiness Check",
+        "tags": [
+          "Health"
+        ]
+      }
+    }
+  }
+}

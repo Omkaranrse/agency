@@ -69,5 +69,74 @@ class GitError(ExternalPortError):
     """Raised when a version control operation fails in the Git port."""
 
 
+class GitAuthenticationError(GitError):
+    """Raised when VCS authentication or permission fails."""
+
+
+class GitConflictError(GitError):
+    """Raised when a repository, branch, or commit conflict occurs."""
+
+
+class GitRateLimitError(GitError):
+    """Raised when GitHub rate limit is exceeded."""
+
+    def __init__(self, message: str, retry_after: float | None = None) -> None:
+        super().__init__(message)
+        self.retry_after = retry_after
+
+
+class GitValidationError(GitError):
+    """Raised when unsafe files, secret leaks, or invalid repo names are detected."""
+
+
+class GitAmbiguityError(GitError):
+    """Raised when network drops make the remote Git operation status indeterminate."""
+
+
 class DeployError(ExternalPortError):
     """Raised when a staging or production deployment operation fails."""
+
+
+class DeployAuthenticationError(DeployError):
+    """Raised when deployment provider authentication or authorization fails."""
+
+
+class DeployRateLimitError(DeployError):
+    """Raised when Cloudflare API rate limits are hit."""
+
+    def __init__(self, message: str, retry_after: float | None = None) -> None:
+        super().__init__(message)
+        self.retry_after = retry_after
+
+
+class DeployTimeoutError(DeployError):
+    """Raised when deployment readiness polling exceeds bounded timeout."""
+
+
+class DeploySmokeTestError(DeployError):
+    """Raised when smoke tests against preview or production deployment fail."""
+
+
+class DeployAmbiguityError(DeployError):
+    """Raised when connection drops make remote deployment state ambiguous."""
+
+
+class DeployValidationError(DeployError):
+    """Raised when deployment project name or payload fails validation."""
+
+
+class ArtifactError(ApplicationError):
+    """Base exception for artifact operations."""
+
+
+class ArtifactNotFoundError(ArtifactError):
+    """Raised when an artifact cannot be located for a given run."""
+
+    def __init__(self, run_id: str, artifact_id: str) -> None:
+        self.run_id = run_id
+        self.artifact_id = artifact_id
+        super().__init__(f"Artifact '{artifact_id}' was not found for run '{run_id}'.")
+
+
+class ArtifactAccessDeniedError(ArtifactError):
+    """Raised when artifact access is denied due to traversal or security rules."""

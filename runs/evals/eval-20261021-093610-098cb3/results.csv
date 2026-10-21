@@ -1,0 +1,13 @@
+eval_run_id,brief_id,client_category,execution_mode,build_success,qa_pass_status,checks_passed,checks_failed,lighthouse_performance,lighthouse_accessibility,lighthouse_best_practices,lighthouse_seo,input_tokens,output_tokens,actual_cost,estimated_cost,total_duration,copy_quality_score,failure_category,failure_summary
+eval-20261021-093610-098cb3,consultant,Business,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.79,,
+eval-20261021-093610-098cb3,creative_agency,Agency,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.21,,
+eval-20261021-093610-098cb3,designer,Portfolio,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,9.00,,
+eval-20261021-093610-098cb3,developer,Portfolio,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,9.00,,
+eval-20261021-093610-098cb3,freelancer,Portfolio,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,9.00,,
+eval-20261021-093610-098cb3,local_services,Services,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.86,,
+eval-20261021-093610-098cb3,musician,Portfolio,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.50,,
+eval-20261021-093610-098cb3,personal_brand,Personal Brand,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,7.86,,
+eval-20261021-093610-098cb3,photographer,Portfolio,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.71,,
+eval-20261021-093610-098cb3,small_business,Business,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.64,,
+eval-20261021-093610-098cb3,student,Portfolio,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.86,,
+eval-20261021-093610-098cb3,writer,Portfolio,fake,TRUE,TRUE,3,0,,,,,0,0,0.000000,0.000000,0.001,8.57,,

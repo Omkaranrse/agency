@@ -1,0 +1,17 @@
+{
+  "client_name": "Maya Patel",
+  "site_type": "Portfolio",
+  "pages": [
+    "Home",
+    "Coursework",
+    "Projects",
+    "Resume",
+    "Contact"
+  ],
+  "tone": "modern",
+  "content_notes": "Final-year Computer Science and HCI undergraduate at UC Berkeley. Passionate about educational technology, accessible web tools, and open-source contribution. Seeking full-time software engineering roles starting summer 2026.",
+  "links": [
+    "https://github.com/mayapatel-cs",
+    "https://linkedin.com/in/mayapatel-student"
+  ]
+}

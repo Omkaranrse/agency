@@ -1,0 +1,17 @@
+{
+  "client_name": "Lucas Moreau",
+  "site_type": "Portfolio",
+  "pages": [
+    "Home",
+    "Galleries",
+    "Exhibitions",
+    "About",
+    "Contact"
+  ],
+  "tone": "editorial",
+  "content_notes": "Architectural and documentary photographer based in Montreal. Capturing urban infrastructure and brutalist buildings across North America. Featured in architectural journals and print monographs.",
+  "links": [
+    "https://instagram.com/lucasmoreauphoto",
+    "https://lucasmoreau.ca"
+  ]
+}
