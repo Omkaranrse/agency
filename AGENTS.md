@@ -34,6 +34,7 @@ This document establishes the mandatory engineering rules, architectural constra
 - **Test Categorization**: Maintain clear separation between test tiers:
   - `backend/tests/unit/`: Fast, isolated tests of domain logic and use cases.
   - `backend/tests/integration/`: Component interactions, database queries, and port implementations.
+  - `backend/tests/api/`: REST API routes, schemas, rate limiting, and contract verification.
   - `backend/tests/e2e/`: Full end-to-end workflows.
 
 ---
@@ -62,7 +63,7 @@ This document establishes the mandatory engineering rules, architectural constra
 - **Framework**: Next.js App Router with TypeScript strict mode.
 - **Component & Styling System**: Tailwind CSS and shadcn/ui.
 - **Typography**: Poppins font only.
-- **Aesthetic Constraints**: Clean, professional, and accessible. No gradients, neon colors, glassmorphism, or emoji icons.
+- **Aesthetic Constraints**: Clean, professional, and accessible. High-contrast, restrained color palettes. Subtle micro-surfaces (e.g., restrained `backdrop-blur-sm` overlays and directional focus spotlights) are permitted for the operator command center; garish neon colors, rainbow gradients, and emoji icons are strictly prohibited.
 
 ---
 

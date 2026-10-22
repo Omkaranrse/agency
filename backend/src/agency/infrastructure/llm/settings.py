@@ -1,13 +1,41 @@
 """Validated settings for LLM providers, model routing, and token budgets."""
 
 import os
+from pathlib import Path
 from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, model_validator
 
 from agency.infrastructure.llm.models import AgentRole
 
-ALLOWED_PROVIDERS = {"gemini", "ollama", "fake"}
+ALLOWED_PROVIDERS = {"gemini", "ollama", "fake", "groq"}
+
+
+def _load_env_file() -> None:
+    """Load key-value pairs from .env file into os.environ if not present."""
+    env_paths = [
+        Path(".env"),
+        Path("../.env"),
+        Path(__file__).resolve().parents[5] / ".env",
+    ]
+    for env_path in env_paths:
+        if env_path.is_file():
+            try:
+                for line in env_path.read_text(encoding="utf-8").splitlines():
+                    line = line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    key, _, val = line.partition("=")
+                    key = key.strip()
+                    val = val.strip().strip("'\"")
+                    if key and key not in os.environ:
+                        os.environ[key] = val
+                break
+            except Exception:
+                pass
+
+
+_load_env_file()
 
 
 def _default_fallback_provider_by_role() -> dict[str, str | None]:
@@ -27,6 +55,7 @@ class LLMSettings(BaseModel):
 
     # Provider credentials & endpoints
     gemini_api_key: SecretStr | None = Field(default=None)
+    groq_api_key: SecretStr | None = Field(default=None)
     ollama_base_url: str = Field(default="http://localhost:11434")
 
     # Gemini model mappings per agent role
@@ -35,6 +64,13 @@ class LLMSettings(BaseModel):
     gemini_model_builder: str = Field(default="gemini-1.5-pro")
     gemini_model_reviewer: str = Field(default="gemini-1.5-flash")
     gemini_model_summarizer: str = Field(default="gemini-1.5-flash")
+
+    # Groq model mappings per agent role
+    groq_model_pm: str = Field(default="llama-3.3-70b-versatile")
+    groq_model_designer: str = Field(default="llama-3.3-70b-versatile")
+    groq_model_builder: str = Field(default="llama-3.3-70b-versatile")
+    groq_model_reviewer: str = Field(default="llama-3.1-8b-instant")
+    groq_model_summarizer: str = Field(default="llama-3.1-8b-instant")
 
     # Ollama model mappings per agent role
     ollama_model_pm: str = Field(default="llama3.2")
@@ -81,14 +117,23 @@ class LLMSettings(BaseModel):
     @classmethod
     def from_env(cls, **overrides: object) -> "LLMSettings":
         """Instantiate settings reading credentials and options from environment."""
-        env_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        env_gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        env_groq_key = os.environ.get("GROQ_API_KEY", "").strip()
         env_ollama_url = os.environ.get("OLLAMA_BASE_URL", "").strip()
+        primary_provider = os.environ.get("PRIMARY_LLM_PROVIDER", "").strip().lower()
 
         kwargs: dict[str, object] = {}
-        if env_key:
-            kwargs["gemini_api_key"] = SecretStr(env_key)
+        if env_gemini_key:
+            kwargs["gemini_api_key"] = SecretStr(env_gemini_key)
+        if env_groq_key:
+            kwargs["groq_api_key"] = SecretStr(env_groq_key)
         if env_ollama_url:
             kwargs["ollama_base_url"] = env_ollama_url
+
+        if primary_provider == "groq" or (env_groq_key and not env_gemini_key):
+            kwargs["primary_provider_by_role"] = {
+                role.value: "groq" for role in AgentRole
+            }
 
         kwargs.update(overrides)
         return cls(**kwargs)  # type: ignore[arg-type]
@@ -149,3 +194,19 @@ class LLMSettings(BaseModel):
                 return self.ollama_model_summarizer
             case _:
                 return self.ollama_model_pm
+
+    def get_groq_model(self, role: str) -> str:
+        """Retrieve the Groq model name designated for a role."""
+        match role:
+            case AgentRole.PM.value:
+                return self.groq_model_pm
+            case AgentRole.DESIGNER.value:
+                return self.groq_model_designer
+            case AgentRole.BUILDER.value:
+                return self.groq_model_builder
+            case AgentRole.REVIEWER.value:
+                return self.groq_model_reviewer
+            case AgentRole.SUMMARIZER.value:
+                return self.groq_model_summarizer
+            case _:
+                return self.groq_model_pm

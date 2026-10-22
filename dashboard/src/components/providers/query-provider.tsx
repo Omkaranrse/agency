@@ -8,6 +8,7 @@ function makeQueryClient(): QueryClient {
     defaultOptions: {
       queries: {
         staleTime: 5000,
+        gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
         retry: (failureCount, error: any) => {
           // Do not retry on 401, 403, 404, or 422

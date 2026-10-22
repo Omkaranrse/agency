@@ -49,9 +49,11 @@ def _create_default_repository() -> RunRepositoryPort:
 
 def _create_default_event_bus() -> EventBusPort:
     """Create a default in-memory event bus for CLI event publication."""
-    from tests.fakes.fake_event_bus import FakeEventBus
+    from agency.infrastructure.adapters.in_memory.event_bus import (
+        InMemoryEventBus,
+    )
 
-    return FakeEventBus()
+    return InMemoryEventBus()
 
 
 def build_parser() -> argparse.ArgumentParser:

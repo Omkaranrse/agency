@@ -14,8 +14,17 @@ def verify_openapi_drift(schema_path: Path | str = "docs/openapi.json") -> bool:
     """Return True if on-disk OpenAPI schema matches the live application schema."""
     target = Path(schema_path)
     if not target.is_file():
-        sys.stderr.write(f"OpenAPI file not found at '{target}'.\n")
-        return False
+        candidates = [
+            Path(__file__).resolve().parents[5] / schema_path,
+            Path.cwd().parent / schema_path,
+        ]
+        for c in candidates:
+            if c.is_file():
+                target = c
+                break
+        else:
+            sys.stderr.write(f"OpenAPI file not found at '{target}'.\n")
+            return False
 
     current_disk_json = target.read_text(encoding="utf-8")
     app = create_app(APISettings(env="development", allow_unauthenticated=True))

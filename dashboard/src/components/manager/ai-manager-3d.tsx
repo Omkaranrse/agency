@@ -24,8 +24,8 @@ const DynamicThreeCanvas = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-full min-h-[340px] flex flex-col items-center justify-center gap-3 bg-surface/40 backdrop-blur-sm rounded-2xl border border-border">
-        <div className="h-12 w-12 rounded-2xl bg-surface-raised border border-border flex items-center justify-center text-accent animate-pulse shadow-glow-sm">
+      <div className="w-full h-full min-h-[340px] flex flex-col items-center justify-center gap-3 bg-surface/40 backdrop-blur-sm rounded-xl border border-border">
+        <div className="h-12 w-12 rounded-xl bg-surface-raised border border-border flex items-center justify-center text-accent animate-pulse shadow-glow-sm">
           <Box className="h-6 w-6" />
         </div>
         <div className="text-center">
@@ -161,7 +161,7 @@ export function AIManager3D({
     return (
       <div
         className={cn(
-          'relative rounded-2xl border border-border bg-surface p-6 flex flex-col items-center justify-center text-center overflow-hidden',
+          'relative rounded-xl border border-border bg-surface p-6 flex flex-col items-center justify-center text-center overflow-hidden',
           className
         )}
         style={{ minHeight: height }}
@@ -178,7 +178,7 @@ export function AIManager3D({
   return (
     <div
       className={cn(
-        'relative rounded-2xl border border-border bg-surface overflow-hidden flex flex-col',
+        'relative rounded-xl border border-border bg-surface overflow-hidden flex flex-col',
         'group transition-all duration-300 hover:border-border-hover',
         className
       )}

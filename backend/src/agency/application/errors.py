@@ -49,6 +49,25 @@ class LLMError(ExternalPortError):
     """Raised when an LLM provider fails to generate or validate a response."""
 
 
+class StructuredOutputError(LLMError):
+    """Raised when model response cannot be parsed or validated against schema."""
+
+    def __init__(
+        self,
+        schema_name: str,
+        message: str,
+        repair_attempts: int = 0,
+        validation_errors: list[str] | None = None,
+    ) -> None:
+        self.schema_name = schema_name
+        self.repair_attempts = repair_attempts
+        self.validation_errors = validation_errors or []
+        super().__init__(
+            f"Failed to generate structured data for schema '{schema_name}' "
+            f"after {repair_attempts} repair attempt(s): {message}"
+        )
+
+
 class SandboxError(ExternalPortError):
     """Base exception for sandbox execution and lifecycle operations."""
 

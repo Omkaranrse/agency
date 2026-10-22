@@ -15,6 +15,7 @@ import { RunDetailsPanel } from '@/components/runs/run-details-panel';
 import { ApprovalPanel } from '@/components/runs/approval-panel';
 import { CompletedRunPanel } from '@/components/runs/completed-run-panel';
 import { RunStatusBadge } from '@/components/runs/run-status';
+import { PipelineStepper } from '@/components/runs/pipeline-stepper';
 import { useRunDetails } from '@/features/runs/queries';
 import { useRunEventStream } from '@/features/runs/event-stream';
 import { parseApiError } from '@/lib/api/config';
@@ -31,11 +32,24 @@ export default function RunDetailPage() {
     isFetching: isRunFetching,
   } = useRunDetails(runId);
 
-  // Hook up SSE live events stream
+  // Hook up SSE live events stream with trailing debounce to prevent fetch storms
+  const debounceTimerRef = React.useRef<NodeJS.Timeout | null>(null);
   const handleEvent = React.useCallback(() => {
-    // Reconcile REST run state when events arrive
-    refetchRun();
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      refetchRun();
+    }, 600);
   }, [refetchRun]);
+
+  React.useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const {
     events,
@@ -47,6 +61,8 @@ export default function RunDetailPage() {
     enabled: Boolean(runId),
     onEvent: handleEvent,
   });
+
+  const [previewMaximized, setPreviewMaximized] = React.useState(false);
 
   const parsedError = runError ? parseApiError(runError) : null;
 
@@ -61,8 +77,8 @@ export default function RunDetailPage() {
           <Skeleton className="h-8 w-24" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <Skeleton className="lg:col-span-4 h-96" />
-          <Skeleton className="lg:col-span-5 h-96" />
+          <Skeleton className="lg:col-span-3 h-96" />
+          <Skeleton className="lg:col-span-6 h-96" />
           <Skeleton className="lg:col-span-3 h-96" />
         </div>
       </div>
@@ -100,7 +116,7 @@ export default function RunDetailPage() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="space-y-6 pb-12"
+      className="space-y-5 pb-12"
     >
       {/* Page Header */}
       <PageHeader
@@ -148,6 +164,9 @@ export default function RunDetailPage() {
         }
       />
 
+      {/* High-Visibility Macro-Stage Stepper */}
+      <PipelineStepper run={run} />
+
       {/* Screen 4: Approval Gate Panel (prominently rendered when awaiting approval) */}
       {isAwaitingApproval && (
         <ApprovalPanel run={run} onRefreshRun={() => refetchRun()} />
@@ -156,33 +175,59 @@ export default function RunDetailPage() {
       {/* Screen 5: Completed Run Panel (prominently rendered when completed) */}
       {isCompleted && <CompletedRunPanel run={run} />}
 
-      {/* Screen 3: Three-Region Workspace (Timeline / Preview / Details) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Left Region: Activity Timeline (4 cols on lg) */}
-        <div className="lg:col-span-4 h-full">
-          <RunTimeline
-            events={events}
-            status={streamStatus}
-            streamError={streamError}
-            onReconnect={reconnectStream}
-            currentStage={run.current_stage}
-          />
+      {/* Main Workspace Grid (Collapsible/Adaptive Viewport Layout) */}
+      {previewMaximized ? (
+        <div className="space-y-4">
+          <div className="h-[750px] w-full">
+            <RunPreview
+              previewUrl={run.preview_url}
+              status={run.status}
+              currentStage={run.current_stage}
+              isMaximized={true}
+              onToggleMaximize={() => setPreviewMaximized(false)}
+            />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+            <RunTimeline
+              events={events}
+              status={streamStatus}
+              streamError={streamError}
+              onReconnect={reconnectStream}
+              currentStage={run.current_stage}
+            />
+            <RunDetailsPanel run={run} events={events} />
+          </div>
         </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+          {/* Left Region: Activity Timeline (3 cols on lg - compact rail) */}
+          <div className="lg:col-span-3 h-full">
+            <RunTimeline
+              events={events}
+              status={streamStatus}
+              streamError={streamError}
+              onReconnect={reconnectStream}
+              currentStage={run.current_stage}
+            />
+          </div>
 
-        {/* Center Region: Prototype Preview (5 cols on lg) */}
-        <div className="lg:col-span-5 h-full">
-          <RunPreview
-            previewUrl={run.preview_url}
-            status={run.status}
-            currentStage={run.current_stage}
-          />
-        </div>
+          {/* Center Region: Prototype Preview (6 cols on lg - spacious 50% width!) */}
+          <div className="lg:col-span-6 h-full">
+            <RunPreview
+              previewUrl={run.preview_url}
+              status={run.status}
+              currentStage={run.current_stage}
+              isMaximized={false}
+              onToggleMaximize={() => setPreviewMaximized(true)}
+            />
+          </div>
 
-        {/* Right Region: Details & QA Tabs (3 cols on lg) */}
-        <div className="lg:col-span-3 h-full">
-          <RunDetailsPanel run={run} events={events} />
+          {/* Right Region: Details & QA Tabs (3 cols on lg) */}
+          <div className="lg:col-span-3 h-full">
+            <RunDetailsPanel run={run} events={events} />
+          </div>
         </div>
-      </div>
+      )}
     </motion.div>
   );
 }

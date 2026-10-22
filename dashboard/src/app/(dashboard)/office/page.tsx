@@ -32,7 +32,7 @@ import { useOfficeState } from '@/features/office/queries';
 import type { AgentRole, OfficeEmployeeState } from '@/features/office/types';
 import { cn } from '@/lib/utils';
 
-export default function OfficePage() {
+function OfficePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryRunId = searchParams.get('runId') || '';
@@ -62,10 +62,24 @@ export default function OfficePage() {
     isFetching: isOfficeFetching,
   } = useOfficeState(activeRunId || undefined);
 
-  // 4. Live SSE integration
+  // 4. Live SSE integration with trailing debounce
+  const debounceTimerRef = React.useRef<NodeJS.Timeout | null>(null);
   const handleEvent = React.useCallback(() => {
-    refetchOffice();
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      refetchOffice();
+    }, 800);
   }, [refetchOffice]);
+
+  React.useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const { status: streamStatus } = useRunEventStream({
     runId: activeRunId,
@@ -238,5 +252,20 @@ export default function OfficePage() {
         onClose={() => setSelectedRole(null)}
       />
     </div>
+  );
+}
+
+export default function OfficePage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="space-y-6 p-6">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-[460px] w-full rounded-2xl" />
+        </div>
+      }
+    >
+      <OfficePageContent />
+    </React.Suspense>
   );
 }

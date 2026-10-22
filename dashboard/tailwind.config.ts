@@ -53,6 +53,14 @@ const config: Config = {
           DEFAULT: 'var(--danger)',
           foreground: 'var(--danger-foreground)',
         },
+        // Semantic aliases for design system consistency
+        'brand-teal': 'var(--accent)',
+        'brand-blue': 'var(--accent-secondary)',
+        error: {
+          DEFAULT: 'var(--danger)',
+          foreground: 'var(--danger-foreground)',
+          surface: 'var(--danger-surface)',
+        },
       },
       borderRadius: {
         DEFAULT: '6px',

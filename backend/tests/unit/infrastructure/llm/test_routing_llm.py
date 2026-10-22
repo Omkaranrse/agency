@@ -212,8 +212,10 @@ def test_routing_llm_token_budget_exhausted_blocks_call() -> None:
     fake_gemini = FakeLLM(provider_name="gemini")
     budget = TokenBudgetManager(default_budget=500, default_reservation=1_000)
 
+    settings = LLMSettings()
     router = RoutingLLM(
         providers={"gemini": fake_gemini},
+        settings=settings,
         budget_manager=budget,
     )
 
@@ -238,7 +240,8 @@ def test_routing_llm_generate_structured_convenience() -> None:
     mock_plan = MockPlan(step="Quick step", priority=1)
     fake_gemini.set_response(MockPlan, mock_plan)
 
-    router = RoutingLLM(providers={"gemini": fake_gemini})
+    settings = LLMSettings()
+    router = RoutingLLM(providers={"gemini": fake_gemini}, settings=settings)
 
     data = router.generate_structured(
         schema=MockPlan,

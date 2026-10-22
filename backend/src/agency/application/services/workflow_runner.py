@@ -141,7 +141,10 @@ class WorkflowRunner:
 
     def _spawn_tracked_task(self, run_id: str, work: Callable[[], None]) -> None:
         """Spawn a supervised asyncio task running work in a separate thread."""
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.get_event_loop()
 
         async def _run_task() -> None:
             try:

@@ -17,6 +17,9 @@ import {
   Compass,
   CheckCircle2,
   Cpu,
+  X,
+  Plus,
+  Clock,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
@@ -59,13 +62,29 @@ export default function NewRunPage() {
   });
 
   const formValues = watch();
+  const [pageTagInput, setPageTagInput] = React.useState('');
 
   const parsedPages = React.useMemo(() => {
     return (formValues.pagesInput || '')
       .split(',')
-      .map((p) => p.trim())
+      .map((p) => p.trim().toLowerCase())
       .filter(Boolean);
   }, [formValues.pagesInput]);
+
+  const addPageTag = (pageName: string) => {
+    const clean = pageName.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    if (!clean) return;
+    if (!parsedPages.includes(clean)) {
+      const nextPages = [...parsedPages, clean];
+      setValue('pagesInput', nextPages.join(', '), { shouldValidate: true });
+    }
+    setPageTagInput('');
+  };
+
+  const removePageTag = (pageToRemove: string) => {
+    const nextPages = parsedPages.filter((p) => p !== pageToRemove);
+    setValue('pagesInput', nextPages.join(', '), { shouldValidate: true });
+  };
 
   const onSubmit = async (values: CreateRunBriefFormValues) => {
     setSubmissionError(null);
@@ -139,7 +158,7 @@ export default function NewRunPage() {
       <div className="p-3 rounded-lg border border-border bg-surface-raised/40 flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <Sparkles className="h-3.5 w-3.5 text-accent" />
-          <span>Quick Project Archetypes:</span>
+          <span>1-Click Archetype Presets:</span>
         </div>
         <div className="flex items-center gap-1.5 flex-wrap">
           {[
@@ -152,23 +171,15 @@ export default function NewRunPage() {
               notes: 'Focus on developer productivity, real-time collaboration, and SOC2 compliance.',
             },
             {
-              label: 'Design Agency',
-              client: 'Koto Studio NYC',
+              label: 'Nordic Portfolio',
+              client: 'Studio Kura Architecture',
               type: 'portfolio',
               pages: 'home, work, philosophy, team, inquiry',
-              tone: 'Editorial Swiss typography, generous whitespace, warm terracotta tones',
-              notes: 'Highlight global brand identity case studies, awards, and design philosophy.',
-            },
-            {
-              label: 'Architecture',
-              client: 'Apex Mass Timber',
-              type: 'business',
-              pages: 'home, about, projects, sustainability, contact',
               tone: 'Nordic minimalism, restrained typography, mass timber accents',
-              notes: 'Specialize in sustainable commercial buildings, carbon-negative CLT engineering.',
+              notes: 'Highlight sustainable commercial architecture, carbon-negative CLT engineering.',
             },
             {
-              label: 'Commerce',
+              label: 'Commerce Showcase',
               client: 'Lumina Ceramics',
               type: 'ecommerce',
               pages: 'home, shop, collections, artisans, checkout',
@@ -260,21 +271,85 @@ export default function NewRunPage() {
                 </h3>
               </div>
 
-              {/* Requested Pages */}
-              <div className="space-y-1.5">
-                <label htmlFor="pagesInput" className="block text-xs font-medium text-foreground">
-                  Requested Site Pages (comma-separated) <span className="text-danger">*</span>
+              {/* Interactive Route Builder */}
+              <div className="space-y-2">
+                <label htmlFor="tag-input" className="block text-xs font-medium text-foreground">
+                  Site Architecture Pages <span className="text-danger">*</span>
                 </label>
-                <Input
-                  id="pagesInput"
-                  placeholder="e.g. home, about, projects, team, contact"
-                  disabled={isPending}
-                  error={Boolean(errors.pagesInput)}
-                  {...register('pagesInput')}
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Each page will be compiled with authentic section content, typography, and Astro components.
-                </p>
+
+                {/* Hidden registered field syncing with react-hook-form */}
+                <input type="hidden" {...register('pagesInput')} />
+
+                {/* Interactive Tag Container */}
+                <div className="min-h-[44px] p-2 rounded-lg border border-border bg-background flex flex-wrap items-center gap-1.5 focus-within:ring-2 focus-within:ring-ring focus-within:border-ring transition-all">
+                  {parsedPages.map((page) => (
+                    <span
+                      key={page}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-mono font-medium bg-surface-raised border border-border text-foreground group"
+                    >
+                      <span>/{page}</span>
+                      <button
+                        type="button"
+                        onClick={() => removePageTag(page)}
+                        className="text-muted-foreground hover:text-danger rounded-full p-0.5 transition-colors"
+                        aria-label={`Remove ${page} page`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+
+                  <input
+                    id="tag-input"
+                    type="text"
+                    value={pageTagInput}
+                    onChange={(e) => setPageTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        addPageTag(pageTagInput);
+                      } else if (e.key === 'Backspace' && !pageTagInput && parsedPages.length > 0) {
+                        removePageTag(parsedPages[parsedPages.length - 1]);
+                      }
+                    }}
+                    placeholder={
+                      parsedPages.length === 0
+                        ? 'Type page name and press Enter...'
+                        : 'Add page...'
+                    }
+                    disabled={isPending}
+                    className="flex-1 min-w-[130px] bg-transparent text-xs text-foreground placeholder:text-muted-foreground outline-none font-mono py-0.5"
+                  />
+                </div>
+
+                {/* Recommended Dynamic Page Chips */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] text-muted-foreground font-mono">Suggested:</span>
+                  {[
+                    formValues.site_type === 'saas'
+                      ? ['pricing', 'features', 'docs', 'integrations']
+                      : formValues.site_type === 'ecommerce'
+                      ? ['shop', 'catalog', 'cart', 'checkout']
+                      : formValues.site_type === 'portfolio'
+                      ? ['work', 'case-studies', 'services', 'team']
+                      : ['about', 'services', 'team', 'contact'],
+                  ]
+                    .flat()
+                    .filter((p) => !parsedPages.includes(p))
+                    .slice(0, 5)
+                    .map((rec) => (
+                      <button
+                        key={rec}
+                        type="button"
+                        onClick={() => addPageTag(rec)}
+                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono border border-border/80 bg-surface-raised/40 text-muted-foreground hover:text-accent hover:border-accent/40 transition-colors"
+                      >
+                        <Plus className="h-2.5 w-2.5" />
+                        <span>{rec}</span>
+                      </button>
+                    ))}
+                </div>
+
                 {errors.pagesInput && (
                   <p className="text-[11px] text-danger">{errors.pagesInput.message}</p>
                 )}
@@ -434,27 +509,53 @@ export default function NewRunPage() {
                 </span>
               </div>
 
-              {/* Agent Orchestration Readiness */}
+              {/* Pre-Flight Telemetry Estimation */}
               <div className="pt-3 border-t border-border space-y-2">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
-                  Agent Pipeline Routing
+                  Pre-Flight Execution Estimates
                 </span>
+                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                  <div className="p-2 rounded bg-surface-raised/50 border border-border/60">
+                    <span className="text-[10px] text-muted-foreground block">Est. Generation</span>
+                    <span className="font-semibold text-accent flex items-center gap-1 mt-0.5">
+                      <Clock className="h-3 w-3" />
+                      ~{Math.max(30, parsedPages.length * 12)}s to preview
+                    </span>
+                  </div>
+                  <div className="p-2 rounded bg-surface-raised/50 border border-border/60">
+                    <span className="text-[10px] text-muted-foreground block">Est. Token Budget</span>
+                    <span className="font-semibold text-foreground flex items-center gap-1 mt-0.5">
+                      <Cpu className="h-3 w-3 text-brand-blue" />
+                      ~{(parsedPages.length * 15_000 + 35_000).toLocaleString()} tokens
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Agent Orchestration Readiness */}
+              <div className="pt-3 border-t border-border space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
+                    Agent Roster Allocation
+                  </span>
+                  <span className="text-[10px] font-mono text-accent">Active Swarm</span>
+                </div>
                 <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-foreground/90">
                     <CheckCircle2 className="h-3 w-3 text-success" />
-                    <span>PMAgent: Spec</span>
+                    <span>PM Sofia: Specs</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-foreground/90">
                     <CheckCircle2 className="h-3 w-3 text-success" />
-                    <span>Designer: Tokens</span>
+                    <span>Designer Liam: Tokens</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-foreground/90">
                     <CheckCircle2 className="h-3 w-3 text-success" />
-                    <span>Builder: Astro AST</span>
+                    <span>Builder Marcus: AST</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <div className="flex items-center gap-1.5 text-foreground/90">
                     <CheckCircle2 className="h-3 w-3 text-success" />
-                    <span>QAService: Checks</span>
+                    <span>QA Elena: Audits</span>
                   </div>
                 </div>
               </div>

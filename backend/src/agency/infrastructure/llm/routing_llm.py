@@ -14,6 +14,7 @@ from agency.infrastructure.llm.errors import (
     RateLimitError,
 )
 from agency.infrastructure.llm.gemini_adapter import GeminiAdapter
+from agency.infrastructure.llm.groq_adapter import GroqAdapter
 from agency.infrastructure.llm.models import (
     AgentRole,
     GenerationRequest,
@@ -47,6 +48,7 @@ class RoutingLLM(LLMPort):
             self.providers = {
                 "gemini": GeminiAdapter(settings=self.settings),
                 "ollama": OllamaAdapter(settings=self.settings),
+                "groq": GroqAdapter(settings=self.settings),
             }
 
     def generate_structured(

@@ -182,18 +182,40 @@ def init_default_dependencies(settings: APISettings | None = None) -> None:
     effective_settings = settings or _settings
 
     if _repository is None:
-        from agency.infrastructure.persistence.in_memory_run_repository import (
-            InMemoryRunRepository,
-        )
+        if (
+            effective_settings.checkpoint_db_path
+            and effective_settings.checkpoint_db_path != ":memory:"
+        ):
+            from agency.infrastructure.persistence.sqlite_run_repository import (
+                SqliteRunRepository,
+            )
 
-        _repository = InMemoryRunRepository()
+            _repository = SqliteRunRepository(
+                db_path=effective_settings.checkpoint_db_path
+            )
+        else:
+            from agency.infrastructure.persistence.in_memory_run_repository import (
+                InMemoryRunRepository,
+            )
+
+            _repository = InMemoryRunRepository()
 
     if _event_feed is None:
-        from agency.infrastructure.persistence.durable_event_feed import (
-            DurableEventFeed,
-        )
+        if (
+            effective_settings.checkpoint_db_path
+            and effective_settings.checkpoint_db_path != ":memory:"
+        ):
+            from agency.infrastructure.persistence.sqlite_event_feed import (
+                SqliteEventFeed,
+            )
 
-        _event_feed = DurableEventFeed()
+            _event_feed = SqliteEventFeed(db_path=effective_settings.checkpoint_db_path)
+        else:
+            from agency.infrastructure.persistence.durable_event_feed import (
+                DurableEventFeed,
+            )
+
+            _event_feed = DurableEventFeed()
 
     if _event_bus is None:
         from agency.domain.events import DomainEvent
@@ -223,15 +245,20 @@ def init_default_dependencies(settings: APISettings | None = None) -> None:
         )
 
     if _workflow_runner is None:
-        from tests.fakes.fake_deploy import FakeDeploy
-        from tests.fakes.fake_qa_service import FakeQAService
-        from tests.fakes.fake_sandbox import FakeSandbox
+        import sqlite3
+
+        from langgraph.checkpoint.sqlite import SqliteSaver
 
         from agency.application.agents.builder_agent import BuilderAgent
         from agency.application.agents.designer_agent import DesignerAgent
         from agency.application.agents.pm_agent import PMAgent
         from agency.application.graph.graph_service import WorkflowGraphService
         from agency.application.graph.nodes import GraphNodes
+        from agency.infrastructure.adapters.in_memory.deploy import InMemoryDeploy
+        from agency.infrastructure.adapters.in_memory.qa_service import (
+            InMemoryQAService,
+        )
+        from agency.infrastructure.adapters.in_memory.sandbox import InMemorySandbox
         from agency.infrastructure.llm.routing_llm import RoutingLLM
         from agency.infrastructure.persistence.langgraph_checkpointer import (
             create_in_memory_checkpointer,
@@ -244,11 +271,25 @@ def init_default_dependencies(settings: APISettings | None = None) -> None:
             pm_agent=PMAgent(llm=llm),
             designer_agent=DesignerAgent(llm=llm),
             builder_agent=BuilderAgent(llm=llm),
-            qa_service=FakeQAService(),
-            sandbox=FakeSandbox(),
-            deploy_port=FakeDeploy(),
+            qa_service=InMemoryQAService(),
+            sandbox=InMemorySandbox(),
+            deploy_port=InMemoryDeploy(),
         )
-        checkpointer = create_in_memory_checkpointer()
+
+        if (
+            effective_settings.checkpoint_db_path
+            and effective_settings.checkpoint_db_path != ":memory:"
+        ):
+            from pathlib import Path
+
+            db_path = Path(effective_settings.checkpoint_db_path).resolve()
+            db_path.parent.mkdir(parents=True, exist_ok=True)
+            conn = sqlite3.connect(str(db_path), check_same_thread=False)
+            checkpointer = SqliteSaver(conn)
+            checkpointer.setup()
+        else:
+            checkpointer = create_in_memory_checkpointer()
+
         workflow_service = WorkflowGraphService(nodes=nodes, checkpointer=checkpointer)
         _workflow_runner = WorkflowRunner(workflow_service=workflow_service)
 

@@ -74,6 +74,9 @@ class APISettings(BaseModel):
     artifacts_dir: str = Field(
         default_factory=lambda: os.getenv("AGENCY_ARTIFACTS_DIR", "artifacts")
     )
+    checkpoint_db_path: str | None = Field(
+        default_factory=lambda: os.getenv("AGENCY_CHECKPOINT_DB_PATH")
+    )
 
     @property
     def is_production(self) -> bool:

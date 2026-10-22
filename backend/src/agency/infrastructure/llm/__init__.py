@@ -17,6 +17,11 @@ from agency.infrastructure.llm.gemini_adapter import (
     GeminiAdapter,
     GeminiTransport,
 )
+from agency.infrastructure.llm.groq_adapter import (
+    DefaultGroqTransport,
+    GroqAdapter,
+    GroqTransport,
+)
 from agency.infrastructure.llm.models import (
     AgentRole,
     GenerationRequest,
@@ -42,12 +47,15 @@ __all__ = [
     "AgentRole",
     "AuthenticationError",
     "DefaultGeminiTransport",
+    "DefaultGroqTransport",
     "DefaultOllamaTransport",
     "FallbackExhaustedError",
     "GeminiAdapter",
     "GeminiTransport",
     "GenerationRequest",
     "GenerationResult",
+    "GroqAdapter",
+    "GroqTransport",
     "InvalidRoleError",
     "LLMError",
     "LLMSettings",

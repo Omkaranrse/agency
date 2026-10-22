@@ -28,15 +28,42 @@ def test_openapi_export_produces_valid_schema(tmp_path: Path) -> None:
     assert "schemas" in data["components"]
 
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
 def test_openapi_schema_has_zero_drift() -> None:
     """Verify that on-disk docs/openapi.json has zero drift against app."""
-    assert verify_openapi_drift("docs/openapi.json") is True
+    schema_path = REPO_ROOT / "docs" / "openapi.json"
+    assert verify_openapi_drift(schema_path) is True
 
 
 def test_generated_typescript_client_compiles() -> None:
     """Verify dashboard TypeScript client compiles with strict mode."""
-    tsc_binary = "./templates/site-astro/node_modules/.bin/tsc"
-    cmd = [tsc_binary, "--project", "dashboard/tsconfig.json"]
+    tsc_candidates = [
+        REPO_ROOT / "dashboard" / "node_modules" / ".bin" / "tsc",
+        REPO_ROOT / "templates" / "site-astro" / "node_modules" / ".bin" / "tsc",
+    ]
+    tsc_binary = None
+    for cand in tsc_candidates:
+        if cand.is_file():
+            tsc_binary = cand
+            break
+
+    if tsc_binary is None:
+        import shutil
+
+        which_tsc = shutil.which("tsc")
+        if which_tsc:
+            tsc_binary = Path(which_tsc)
+
+    assert (
+        tsc_binary is not None
+    ), "TypeScript compiler (tsc) not found in node_modules or PATH"
+    cmd = [
+        str(tsc_binary),
+        "--project",
+        str(REPO_ROOT / "dashboard" / "tsconfig.json"),
+    ]
     res = subprocess.run(
         cmd,
         capture_output=True,

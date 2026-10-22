@@ -6,6 +6,7 @@ import { OrbitControls, Text, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { clone as skeletonClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { AgentRole, OfficeEmployeeState, WorkstationState } from '@/features/office/types';
+import { RotateCcw } from 'lucide-react';
 
 /* ─────────────── COLOR PALETTE ─────────────── */
 const PALETTE = {
@@ -750,7 +751,7 @@ function ManagerCatCharacter({
   }, [clonedScene, gltf.animations, status]);
 
   useFrame((_, delta) => {
-    mixerRef.current?.update(delta);
+    mixerRef.current?.update(Math.min(delta, 0.1));
   });
 
   return (
@@ -907,7 +908,7 @@ function CameraPresetHandler({
   onResetPreset: () => void;
 }) {
   const { camera } = useThree();
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!preset) return;
     const targetPos =
       preset === 'iso'
@@ -916,7 +917,8 @@ function CameraPresetHandler({
           ? new THREE.Vector3(0, 14, 0.1)
           : new THREE.Vector3(0, 4, 11);
 
-    camera.position.lerp(targetPos, 0.08);
+    const step = Math.min(delta * 5, 0.25);
+    camera.position.lerp(targetPos, step);
     if (camera.position.distanceTo(targetPos) < 0.15) {
       onResetPreset();
     }
@@ -949,7 +951,13 @@ export default function ThreeOfficeCanvas({
       <Canvas
         camera={{ position: [9, 7.5, 9], fov: 36 }}
         shadows
-        gl={{ antialias: true, alpha: false }}
+        dpr={[1, 1.5]}
+        gl={{
+          antialias: true,
+          alpha: false,
+          powerPreference: 'high-performance',
+          stencil: false,
+        }}
         onCreated={({ gl }) => {
           gl.setClearColor('#0E131D');
           gl.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -966,8 +974,8 @@ export default function ThreeOfficeCanvas({
           enableZoom
           enableRotate
           target={[0, 0.7, 0]}
-          minPolarAngle={Math.PI / 8}
-          maxPolarAngle={Math.PI / 2.3}
+          minPolarAngle={Math.PI / 6}
+          maxPolarAngle={Math.PI / 2.2}
           minDistance={6}
           maxDistance={20}
           dampingFactor={0.08}
@@ -1046,6 +1054,15 @@ export default function ThreeOfficeCanvas({
           title="Front View"
         >
           Front
+        </button>
+        <button
+          type="button"
+          onClick={() => setCameraPreset('iso')}
+          className="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium text-accent hover:bg-surface-raised transition-colors border-l border-border pl-2 ml-0.5"
+          title="Reset Camera (Isometric Snap)"
+        >
+          <RotateCcw className="h-3 w-3" />
+          <span>Reset</span>
         </button>
       </div>
 

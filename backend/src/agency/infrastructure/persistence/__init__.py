@@ -16,6 +16,12 @@ from agency.infrastructure.persistence.langgraph_checkpointer import (
 from agency.infrastructure.persistence.local_artifact_storage import (
     LocalArtifactStorage,
 )
+from agency.infrastructure.persistence.sqlite_event_feed import (
+    SqliteEventFeed,
+)
+from agency.infrastructure.persistence.sqlite_run_repository import (
+    SqliteRunRepository,
+)
 
 __all__ = [
     "BroadcastingEventBus",
@@ -23,5 +29,7 @@ __all__ = [
     "InMemoryRunRepository",
     "LocalArtifactStorage",
     "SqliteCheckpointerManager",
+    "SqliteEventFeed",
+    "SqliteRunRepository",
     "create_in_memory_checkpointer",
 ]

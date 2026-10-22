@@ -113,7 +113,7 @@ function CatCharacterModel({ state, reducedMotion }: CatModelProps) {
   const { pointer } = useThree();
   useFrame((_, delta) => {
     if (mixerRef.current && !reducedMotion) {
-      mixerRef.current.update(delta);
+      mixerRef.current.update(Math.min(delta, 0.1));
     }
 
     // Subtle head tracking towards pointer when idle or listening
@@ -188,7 +188,8 @@ export default function AIManager3DCanvas({
     <Canvas
       camera={{ position: [0, 0.45, 1.85], fov: 42 }}
       shadows
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      dpr={[1, 1.5]}
+      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', stencil: false }}
       className="w-full h-full cursor-grab active:cursor-grabbing"
     >
       {/* Dynamic Lighting Setup */}

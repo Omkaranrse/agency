@@ -66,6 +66,21 @@ export function ManagerPanel({
   const [isMuted, setIsMuted] = React.useState(false);
   const [selectedRunId, setSelectedRunId] = React.useState(defaultRunId || '');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const recognitionRef = React.useRef<any>(null);
+
+  // Clean up audio synthesis and recognition on unmount
+  React.useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+    };
+  }, []);
 
   // Fetch runs list for project context
   const { data: runsData } = useRunsList({ limit: 20 });
@@ -156,44 +171,60 @@ export function ManagerPanel({
 
       setMessages((prev) => [...prev, managerMsg]);
 
-      // Stop speaking indicator after a few seconds
-      setTimeout(() => {
-        setIsSpeaking(false);
-      }, 3500);
+      // Web Speech Synthesis (TTS)
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window && !isMuted) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(replyText);
+        utterance.rate = 1.05;
+        utterance.pitch = 1.05;
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        setTimeout(() => {
+          setIsSpeaking(false);
+        }, 3500);
+      }
     }, 600);
   };
 
-  // Push-to-talk simulation & Web Speech API support
+  // Push-to-talk speech recognition & Web Speech API
   const handleToggleVoice = () => {
     if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
       setIsListening(false);
     } else {
       setIsListening(true);
-      // Check if browser supports SpeechRecognition
       const SpeechRecognition =
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         try {
           const recognition = new SpeechRecognition();
+          recognitionRef.current = recognition;
           recognition.continuous = false;
           recognition.interimResults = false;
+          recognition.lang = 'en-US';
           recognition.onresult = (event: any) => {
-            const transcript = event.results[0][0].transcript;
-            setInputMessage(transcript);
+            const transcript = event.results?.[0]?.[0]?.transcript;
+            if (transcript) {
+              setInputMessage(transcript);
+            }
             setIsListening(false);
           };
           recognition.onerror = () => setIsListening(false);
           recognition.onend = () => setIsListening(false);
           recognition.start();
         } catch {
-          // Fallback timer if permissions restricted
           setTimeout(() => {
             setIsListening(false);
             setInputMessage('Check status of all agency workers');
           }, 3000);
         }
       } else {
-        // Dev state simulation
         setTimeout(() => {
           setIsListening(false);
           setInputMessage('Summarize current run status');
@@ -203,6 +234,9 @@ export function ManagerPanel({
   };
 
   const handleStopSpeaking = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
     setIsSpeaking(false);
   };
 
@@ -217,7 +251,7 @@ export function ManagerPanel({
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            'flex flex-col rounded-2xl border border-brand-teal/40 bg-surface/95 backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-300',
+            'flex flex-col rounded-xl border border-brand-teal/40 bg-surface/95 backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-300',
             isExpanded
               ? 'w-full h-full max-w-6xl max-h-[92vh]'
               : 'w-full h-[620px] max-w-2xl'
@@ -273,7 +307,16 @@ export function ManagerPanel({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                onClick={() => setIsMuted((m) => !m)}
+                onClick={() => {
+                  setIsMuted((m) => {
+                    const next = !m;
+                    if (next && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                      window.speechSynthesis.cancel();
+                      setIsSpeaking(false);
+                    }
+                    return next;
+                  });
+                }}
                 title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
                 className="hover:text-foreground"
               >

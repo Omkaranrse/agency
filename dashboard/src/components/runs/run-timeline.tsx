@@ -174,6 +174,13 @@ export function RunTimeline({
         </div>
       )}
 
+      {/* Accessible Live Region for Screen Readers */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {events.length > 0
+          ? `New pipeline event: ${getEventMeta(events[events.length - 1].event_type).label}`
+          : 'Waiting for pipeline telemetry'}
+      </div>
+
       {/* Events List with Framer Motion AnimatePresence */}
       <div
         ref={listRef}

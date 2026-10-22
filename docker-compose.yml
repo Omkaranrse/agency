@@ -29,9 +29,11 @@ services:
       LANGFUSE_PUBLIC_KEY: "${LANGFUSE_PUBLIC_KEY:-pk-lf-local}"
       LANGFUSE_SECRET_KEY: "${LANGFUSE_SECRET_KEY:-sk-lf-local}"
       LANGFUSE_HOST: "${LANGFUSE_HOST:-http://langfuse-server:3000}"
+      DOCKER_HOST: "${DOCKER_HOST:-unix:///var/run/docker.sock}"
     volumes:
       - backend_data:/app/data
       - backend_artifacts:/app/artifacts
+      - /var/run/docker.sock:/var/run/docker.sock
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 15s

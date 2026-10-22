@@ -10,9 +10,9 @@ from agency.application.agents.models import (
     PMSpecResult,
 )
 from agency.application.agents.prompt_loader import PromptLoader
+from agency.application.errors import StructuredOutputError
 from agency.application.ports.llm import LLMPort
 from agency.domain.entities.brief import Brief
-from agency.infrastructure.llm.errors import StructuredOutputError
 
 UNSUPPORTED_KEYWORDS = (
     "database",

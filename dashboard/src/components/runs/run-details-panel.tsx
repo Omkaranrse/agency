@@ -2,10 +2,23 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, ShieldCheck, Cpu, Code2, Layers, Clock, AlertTriangle, Sparkles } from 'lucide-react';
+import {
+  FileText,
+  ShieldCheck,
+  Cpu,
+  Code2,
+  FileCode,
+  Copy,
+  Check,
+  Layers,
+  Clock,
+  AlertTriangle,
+  Sparkles,
+} from 'lucide-react';
 import { SlidingTabs } from '@/components/framer/sliding-tabs';
 import { AnimatedCounter } from '@/components/framer/animated-counter';
 import { QAReportPanel } from './qa-report-panel';
+import { useRunArtifacts } from '@/features/runs/queries';
 import type { RunResponse, DomainEventEnvelope } from '@/features/runs/types';
 
 export interface RunDetailsPanelProps {
@@ -15,9 +28,17 @@ export interface RunDetailsPanelProps {
 
 export function RunDetailsPanel({ run, events }: RunDetailsPanelProps) {
   const [activeTab, setActiveTab] = React.useState<string>('overview');
+  const [selectedArtifactId, setSelectedArtifactId] = React.useState<string | null>(null);
+  const [copied, setCopied] = React.useState(false);
+
+  const { data: artifactsData, isLoading: isArtifactsLoading } = useRunArtifacts(
+    run.run_id
+  );
+  const artifacts = React.useMemo(() => artifactsData?.items || [], [artifactsData?.items]);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: FileText },
+    { id: 'artifacts', label: 'Code & Diffs', icon: FileCode },
     { id: 'qa', label: 'QA Report', icon: ShieldCheck },
     { id: 'usage', label: 'Telemetry', icon: Cpu },
     { id: 'raw', label: 'Raw Log', icon: Code2 },
@@ -115,6 +136,106 @@ export function RunDetailsPanel({ run, events }: RunDetailsPanelProps) {
             </motion.div>
           )}
 
+          {activeTab === 'artifacts' && (
+            <motion.div
+              key="artifacts"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18 }}
+              className="space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
+                  Generated Artifacts
+                </h4>
+                <span className="text-[10px] font-mono text-accent px-1.5 py-0.5 rounded bg-accent/10 border border-accent/30">
+                  {artifacts.length} {artifacts.length === 1 ? 'FILE' : 'FILES'}
+                </span>
+              </div>
+
+              {isArtifactsLoading ? (
+                <div className="space-y-2 py-4">
+                  <div className="h-8 rounded bg-surface-raised animate-pulse" />
+                  <div className="h-8 rounded bg-surface-raised animate-pulse" />
+                  <div className="h-8 rounded bg-surface-raised animate-pulse" />
+                </div>
+              ) : artifacts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border border-border/80 bg-background/50 space-y-2">
+                  <FileCode className="h-8 w-8 text-muted-foreground/60" />
+                  <p className="text-xs font-medium text-foreground">No Code Artifacts Yet</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Builder and QA agents emit source files (HTML, React, CSS, config) as stages complete.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="divide-y divide-border/60 rounded-lg border border-border/80 bg-background/50 overflow-hidden">
+                    {artifacts.map((art) => {
+                      const isSelected = selectedArtifactId === art.artifact_id;
+                      return (
+                        <div
+                          key={art.artifact_id}
+                          onClick={() => setSelectedArtifactId(isSelected ? null : art.artifact_id)}
+                          className={`p-2.5 flex items-center justify-between gap-2 cursor-pointer transition-colors ${
+                            isSelected
+                              ? 'bg-accent/10 border-l-2 border-l-accent'
+                              : 'hover:bg-surface-raised/60'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileCode className="h-4 w-4 shrink-0 text-accent" />
+                            <div className="min-w-0">
+                              <span className="font-mono text-xs text-foreground font-medium block truncate">
+                                {art.display_name}
+                              </span>
+                              <span className="text-[10px] font-mono text-muted-foreground block">
+                                {art.artifact_type} &bull;{' '}
+                                {art.size_bytes ? `${Math.round(art.size_bytes / 1024)} KB` : 'Dynamic'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(art.artifact_id);
+                                setCopied(true);
+                                setTimeout(() => setCopied(false), 2000);
+                              }}
+                              title="Copy artifact ID"
+                              className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-surface-raised"
+                            >
+                              {copied ? (
+                                <Check className="h-3 w-3 text-success" />
+                              ) : (
+                                <Copy className="h-3 w-3" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {selectedArtifactId && (
+                    <div className="p-3 rounded-lg border border-border/80 bg-surface-raised/40 space-y-1.5 font-mono text-[11px]">
+                      <div className="flex justify-between items-center text-muted-foreground">
+                        <span>Selected Artifact:</span>
+                        <span className="text-accent truncate select-all">{selectedArtifactId}</span>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground/80">
+                        File ready for operator inspection or export via VCS pipeline.
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          )}
+
           {activeTab === 'qa' && (
             <motion.div
               key="qa"
@@ -151,7 +272,7 @@ export function RunDetailsPanel({ run, events }: RunDetailsPanelProps) {
               <div className="rounded-lg border border-border/80 bg-background/50 p-3 space-y-2.5 font-mono text-[11px]">
                 <div className="flex justify-between items-center pb-2 border-b border-border/50">
                   <span className="text-muted-foreground">Primary Intelligence:</span>
-                  <span className="text-foreground font-semibold">Gemini 2.5 Flash</span>
+                  <span className="text-foreground font-semibold">Groq (Llama 3.3 70B) / Gemini</span>
                 </div>
                 <div className="flex justify-between items-center pb-2 border-b border-border/50">
                   <span className="text-muted-foreground">Deterministic Fallback:</span>

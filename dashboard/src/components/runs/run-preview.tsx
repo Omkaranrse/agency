@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Lock,
   Maximize2,
+  Minimize2,
   Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,9 +22,17 @@ export interface RunPreviewProps {
   previewUrl: string | null | undefined;
   status: string;
   currentStage: string;
+  isMaximized?: boolean;
+  onToggleMaximize?: () => void;
 }
 
-export function RunPreview({ previewUrl, status, currentStage }: RunPreviewProps) {
+export function RunPreview({
+  previewUrl,
+  status,
+  currentStage,
+  isMaximized = false,
+  onToggleMaximize,
+}: RunPreviewProps) {
   const [viewport, setViewport] = React.useState<'desktop' | 'mobile'>('desktop');
   const [iframeKey, setIframeKey] = React.useState(0);
   const [iframeLoading, setIframeLoading] = React.useState(true);
@@ -126,6 +135,23 @@ export function RunPreview({ previewUrl, status, currentStage }: RunPreviewProps
                 <RefreshCw className={`h-3 w-3 ${iframeLoading ? 'animate-spin text-brand-teal' : ''}`} />
               </Button>
 
+              {onToggleMaximize && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={onToggleMaximize}
+                  title={isMaximized ? 'Restore View' : 'Maximize Preview (Focus Mode)'}
+                  aria-label={isMaximized ? 'Restore View' : 'Maximize Preview (Focus Mode)'}
+                  className="hover:text-brand-teal"
+                >
+                  {isMaximized ? (
+                    <Minimize2 className="h-3.5 w-3.5" />
+                  ) : (
+                    <Maximize2 className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+              )}
+
               <ShimmerButton asChild size="sm" variant="outline" className="h-7 text-[11px] px-2.5">
                 <a
                   href={previewUrl!}
@@ -147,7 +173,7 @@ export function RunPreview({ previewUrl, status, currentStage }: RunPreviewProps
         {!isValidUrl ? (
           <div className="flex flex-col items-center justify-center text-center p-8 text-muted-foreground max-w-sm">
             <div className="relative mb-4">
-              <div className="h-14 w-14 rounded-2xl bg-surface-raised border border-border flex items-center justify-center text-brand-teal">
+              <div className="h-14 w-14 rounded-xl bg-surface-raised border border-border flex items-center justify-center text-brand-teal">
                 <EyeOff className="h-6 w-6 opacity-70" />
               </div>
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
