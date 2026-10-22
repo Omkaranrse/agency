@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: agency-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: "pip install --upgrade pip && pip install -e ."
+    startCommand: "uvicorn agency.interfaces.api.app:create_app --factory --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: AGENCY_ENVIRONMENT
+        value: production
+      - key: AGENCY_ALLOW_UNAUTHENTICATED
+        value: "true"
+      - key: AGENCY_CHECKPOINT_DB_PATH
+        value: /tmp/checkpoints.sqlite
+      - key: AGENCY_ARTIFACTS_DIR
+        value: /tmp/artifacts
+      - key: PRIMARY_LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+      - key: DASHBOARD_ORIGINS
+        value: "http://localhost:3000,https://*.vercel.app"
