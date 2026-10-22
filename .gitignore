@@ -6,14 +6,15 @@ __pycache__/
 .Python
 
 # Distribution / packaging
-build/
+/build/
 develop-eggs/
-dist/
+/dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
+!dashboard/src/lib/
 parts/
 sdist/
 var/
